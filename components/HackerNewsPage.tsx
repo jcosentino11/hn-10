@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, Linking, Dimensions } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent } from 'react-native';
 
 interface Story {
   objectID: string;
@@ -15,6 +15,7 @@ interface HackerNewsPageProps {
 const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories }) => {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
+  const [itemHeight, setItemHeight] = useState<number | null>(null);
 
   const fetchHackerNewsStories = async () => {
     try {
@@ -32,17 +33,22 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories }) => {
     fetchHackerNewsStories();
   }, [numberOfStories]);
 
-  const { height } = Dimensions.get('window');
-  const itemHeight = height / numberOfStories;
-  
+  const onLayout = useCallback((event: LayoutChangeEvent) => {
+    const { height } = event.nativeEvent.layout;
+    setItemHeight(height);
+  }, []);
+
+  const lastItemMargin = 20;
+  const calculatedItemHeight = itemHeight ? Math.max(50, (itemHeight - lastItemMargin) / numberOfStories) : 50;
+
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onLayout}>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
-        stories.map((item) => (
+        stories.map((item, index) => (
           <TouchableOpacity key={item.objectID} onPress={() => Linking.openURL(item.url)}>
-            <View style={[styles.storyContainer, { height: itemHeight }]}>
+            <View style={[styles.storyContainer, { height: calculatedItemHeight, marginBottom: index === numberOfStories - 1 ? lastItemMargin : 0 }]}>
               <Text style={styles.storyTitle} numberOfLines={2}>{item.title}</Text>
               <Text style={styles.storyInfo}>by {item.author}</Text>
             </View>
@@ -63,6 +69,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   storyTitle: {
     fontSize: 16,
