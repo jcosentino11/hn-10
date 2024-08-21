@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent, useColorScheme } from 'react-native';
 
 interface Story {
   objectID: string;
@@ -40,17 +40,23 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories }) => {
 
   const lastItemMargin = 20;
   const calculatedItemHeight = itemHeight ? Math.max(50, (itemHeight - lastItemMargin) / numberOfStories) : 50;
+  const colors = {
+    white: useColorScheme() === 'dark' ? '#000' : '#fff',
+    black: useColorScheme() === 'dark' ? '#fff' : '#000',
+    grey: useColorScheme() === 'dark' ? '#aaa' : '#555',
+    lightGrey: useColorScheme() === 'dark' ? '#000' : '#ddd',
+  };
 
   return (
-    <View style={styles.container} onLayout={onLayout}>
+    <View style={[styles.container, {backgroundColor: colors.white}]} onLayout={onLayout}>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         stories.map((item, index) => (
           <TouchableOpacity key={item.objectID} onPress={() => Linking.openURL(item.url)}>
-            <View style={[styles.storyContainer, { height: calculatedItemHeight, marginBottom: index === numberOfStories - 1 ? lastItemMargin : 0 }]}>
-              <Text style={styles.storyTitle} numberOfLines={2}>{item.title}</Text>
-              <Text style={styles.storyInfo}>by {item.author}</Text>
+            <View style={[styles.storyContainer, { borderBottomColor: colors.lightGrey, height: calculatedItemHeight, marginBottom: index === numberOfStories - 1 ? lastItemMargin : 0 }]}>
+              <Text style={[styles.storyTitle, {color: colors.black}]} numberOfLines={2}>{item.title}</Text>
+              <Text style={[styles.storyInfo, {color: colors.grey}]}>by {item.author}</Text>
             </View>
           </TouchableOpacity>
         ))
@@ -61,13 +67,11 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    flex: 1
   },
   storyContainer: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
     justifyContent: 'center',
     overflow: 'hidden',
   },
@@ -77,7 +81,6 @@ const styles = StyleSheet.create({
   },
   storyInfo: {
     fontSize: 12,
-    color: '#555',
     marginTop: 5,
   },
 });
