@@ -10,7 +10,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <HackerNewsPage />
+      <HackerNewsPage numberOfStories={10} />
     </View>
   );
 }
