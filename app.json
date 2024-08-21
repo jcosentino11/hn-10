@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "hacker-news-focused",
-    "slug": "hacker-news-focused",
+    "name": "hacker-news-top-10",
+    "slug": "hacker-news-top-10",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "hntopten",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
