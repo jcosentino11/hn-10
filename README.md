@@ -1,6 +1,6 @@
 # HN 10
 
-Just the top 10 HN posts.
+Just the top 10 [HN](https://news.ycombinator.com/) posts.
 
 Built with [expo](https://expo.dev/), powered by [agolia](https://hn.algolia.com/).
 
