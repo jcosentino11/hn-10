@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent } from 'react-native';
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
 
@@ -17,7 +17,6 @@ interface HackerNewsPageProps {
 
 const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onDataFetched }) => {
   const [stories, setStories] = useState<Story[]>([]);
-  const [loading, setLoading] = useState(true);
   const [itemHeight, setItemHeight] = useState<number | null>(null);
 
   const fetchHackerNewsStories = async () => {
@@ -28,8 +27,6 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
       onDataFetched();
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -48,11 +45,8 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
 
   return (
     <View style={[styles.container, {backgroundColor: useThemeColor(scheme, 'offWhite')}]} onLayout={onLayout}>
-      {loading ? (
-        // TODO remove
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
-        stories.map((item, index) => (
+      {(
+        stories.map((item) => (
           <TouchableOpacity key={item.objectID} onPress={() => Linking.openURL(item.url)}>
             <View style={[styles.storyContainer, { borderBottomColor: useThemeColor(scheme, 'lightGrey'), height: calculatedItemHeight }]}>
               <Text style={[styles.storyTitle, {color: useThemeColor(scheme, 'black')}]} numberOfLines={2}>{item.title}</Text>
