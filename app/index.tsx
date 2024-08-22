@@ -53,6 +53,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 10,
+    marginTop: 10,
+    marginBottom: 20,
     alignItems: 'center',
   },
   bottomBarText: {
