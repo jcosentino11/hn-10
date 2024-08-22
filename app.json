@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "hacker-news-top-10",
-    "slug": "hacker-news-top-10",
+    "name": "hn-10",
+    "slug": "hn-10",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
