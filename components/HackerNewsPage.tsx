@@ -56,7 +56,6 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories }) => {
           <TouchableOpacity key={item.objectID} onPress={() => Linking.openURL(item.url)}>
             <View style={[styles.storyContainer, { borderBottomColor: colors.lightGrey, height: calculatedItemHeight, marginBottom: index === numberOfStories - 1 ? lastItemMargin : 0 }]}>
               <Text style={[styles.storyTitle, {color: colors.black}]} numberOfLines={2}>{item.title}</Text>
-              <Text style={[styles.storyInfo, {color: colors.grey}]}>by {item.author}</Text>
             </View>
           </TouchableOpacity>
         ))
