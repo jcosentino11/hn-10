@@ -13,6 +13,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "me.josephcosentino.hntt",
       "supportsTablet": true
     },
     "android": {
@@ -31,6 +32,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "ea1fa30c-a27f-4593-940b-11e9a1787cd2"
+      }
     }
   }
 }
