@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent, useColorScheme } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
 
 interface Story {
   objectID: string;
@@ -21,6 +22,7 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories }) => {
     try {
       const response = await fetch(`https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=${numberOfStories}`);
       const data = await response.json();
+      SplashScreen.hideAsync();
       setStories(data.hits);
     } catch (error) {
       console.error(error);
