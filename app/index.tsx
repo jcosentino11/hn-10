@@ -3,6 +3,8 @@ import HackerNewsPage from "@/components/HackerNewsPage";
 import { View, Text, StyleSheet } from "react-native";
 import * as SplashScreen from 'expo-splash-screen';
 import { formatDistanceToNow } from 'date-fns';
+import { useThemeColor } from "@/utils/Colors";
+import { useColorScheme } from "react-native";
 
 export default function Index() {
 
@@ -19,6 +21,7 @@ export default function Index() {
     }, 60000);
     return () => clearInterval(interval);
   }, [lastUpdated]);
+  const scheme = useColorScheme();
 
   return (
     <View style={styles.container}>
@@ -27,7 +30,7 @@ export default function Index() {
       </View>
       <View style={styles.bottomBar}>
         {lastUpdated && (
-            <Text style={styles.bottomBarText}>
+            <Text style={[styles.bottomBarText, {color: useThemeColor(scheme, "black")}]}>
               {`Last Updated: ${formatDistanceToNow(lastUpdated, { addSuffix: true })}`}
             </Text>
         )}      
