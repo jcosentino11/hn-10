@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent, useColorScheme } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
 
 interface Story {
   objectID: string;
@@ -11,9 +10,10 @@ interface Story {
 
 interface HackerNewsPageProps {
   numberOfStories: number;
+  onDataFetched: () => void;
 }
 
-const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories }) => {
+const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onDataFetched }) => {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [itemHeight, setItemHeight] = useState<number | null>(null);
@@ -22,8 +22,8 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories }) => {
     try {
       const response = await fetch(`https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=${numberOfStories}`);
       const data = await response.json();
-      SplashScreen.hideAsync();
       setStories(data.hits);
+      onDataFetched();
     } catch (error) {
       console.error(error);
     } finally {
@@ -40,23 +40,23 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories }) => {
     setItemHeight(height);
   }, []);
 
-  const lastItemMargin = 20;
-  const calculatedItemHeight = itemHeight ? Math.max(50, (itemHeight - lastItemMargin) / numberOfStories) : 50;
+  const calculatedItemHeight = itemHeight ? Math.max(50, itemHeight / numberOfStories) : 50;
   const colors = {
     white: useColorScheme() === 'dark' ? '#000' : '#fff',
     black: useColorScheme() === 'dark' ? '#fff' : '#000',
     grey: useColorScheme() === 'dark' ? '#aaa' : '#555',
     lightGrey: useColorScheme() === 'dark' ? '#000' : '#ddd',
+    offWhite: useColorScheme() === 'dark' ? '#000' : '#f6f6f6',
   };
 
   return (
-    <View style={[styles.container, {backgroundColor: colors.white}]} onLayout={onLayout}>
+    <View style={[styles.container, {backgroundColor: colors.offWhite}]} onLayout={onLayout}>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         stories.map((item, index) => (
           <TouchableOpacity key={item.objectID} onPress={() => Linking.openURL(item.url)}>
-            <View style={[styles.storyContainer, { borderBottomColor: colors.lightGrey, height: calculatedItemHeight, marginBottom: index === numberOfStories - 1 ? lastItemMargin : 0 }]}>
+            <View style={[styles.storyContainer, { borderBottomColor: colors.lightGrey, height: calculatedItemHeight }]}>
               <Text style={[styles.storyTitle, {color: colors.black}]} numberOfLines={2}>{item.title}</Text>
             </View>
           </TouchableOpacity>
@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   storyContainer: {
-    padding: 10,
+    paddingLeft: 30,
+    paddingRight: 30,
     borderBottomWidth: 1,
     justifyContent: 'center',
     overflow: 'hidden',
@@ -82,7 +83,6 @@ const styles = StyleSheet.create({
   },
   storyInfo: {
     fontSize: 12,
-    marginTop: 5,
   },
 });
 
