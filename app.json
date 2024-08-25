@@ -13,7 +13,6 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "buildNumber": "2",
       "bundleIdentifier": "me.josephcosentino.hntt",
       "supportsTablet": false
     },
