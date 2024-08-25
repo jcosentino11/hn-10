@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "ci-test": "jest",
+    "ci-test": "jest --runInBand",
     "lint": "expo lint"
   },
   "jest": {
