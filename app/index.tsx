@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { formatDistanceToNow } from 'date-fns';
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
+import HNClient from '@/clients/HNClient';
 
 export default function Index() {
 
@@ -23,10 +24,12 @@ export default function Index() {
   }, [lastUpdated]);
   const scheme = useColorScheme();
 
+  const client = new HNClient();
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <HackerNewsPage numberOfStories={10} onDataFetched={handleDataFetched} />
+        <HackerNewsPage numberOfStories={10} onDataFetched={handleDataFetched} client={client} />
       </View>
       <View style={styles.bottomBar}>
         {lastUpdated && (

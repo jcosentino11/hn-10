@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent } from 'react-native';
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
+import HNClient from '@/clients/HNClient';
 
 interface Story {
   objectID: string;
@@ -13,28 +14,25 @@ interface Story {
 interface HackerNewsPageProps {
   numberOfStories: number;
   onDataFetched: () => void;
+  client: HNClient;
 }
 
-const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onDataFetched }) => {
+const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onDataFetched, client }) => {
   const [stories, setStories] = useState<Story[]>([]);
   const [itemHeight, setItemHeight] = useState<number | null>(null);
+  const scheme = useColorScheme();
 
-  const fetchHackerNewsStories = async () => {
-    try {
-      const response = await fetch(`https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=${numberOfStories}`);
-      const data = await response.json();
-      setStories(data.hits);
+  const fetchStories = async () => {
+    const fetchedStories = await client.fetchHackerNewsStories(numberOfStories);
+    if (fetchedStories) {
+      setStories(fetchedStories);
       onDataFetched();
-    } catch (error) {
-      console.error(error);
     }
   };
 
-  const scheme = useColorScheme();
-
   useEffect(() => {
-    fetchHackerNewsStories();
-  }, [numberOfStories]);
+    fetchStories();
+  }, [numberOfStories, client, onDataFetched]);
 
   const onLayout = useCallback((event: LayoutChangeEvent) => {
     const { height } = event.nativeEvent.layout;
