@@ -22,13 +22,13 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
   const [itemHeight, setItemHeight] = useState<number | null>(null);
   const scheme = useColorScheme();
 
-  const fetchStories = async () => {
+  const fetchStories = useCallback(async () => {
     const fetchedStories = await client.fetchHackerNewsStories(numberOfStories);
     if (fetchedStories) {
       setStories(fetchedStories);
       onDataFetched();
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchStories();
