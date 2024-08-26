@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent, ActivityIndicator } from 'react-native';
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
 import { HNClient } from '@/clients/HNClient';
@@ -20,13 +20,21 @@ interface HackerNewsPageProps {
 const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onDataFetched, client }) => {
   const [stories, setStories] = useState<Story[]>([]);
   const [itemHeight, setItemHeight] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
   const scheme = useColorScheme();
 
   const fetchStories = useCallback(async () => {
-    const fetchedStories = await client.fetchHackerNewsStories(numberOfStories);
-    if (fetchedStories) {
-      setStories(fetchedStories);
-      onDataFetched();
+    setLoading(true);
+    try {
+      const fetchedStories = await client.fetchHackerNewsStories(
+        numberOfStories
+      );
+      if (fetchedStories) {
+        setStories(fetchedStories);
+        onDataFetched();
+      }
+    } finally {
+      setLoading(false);
     }
   }, [client, numberOfStories, onDataFetched]);
 
@@ -42,19 +50,23 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
   const calculatedItemHeight = itemHeight ? Math.max(50, itemHeight / numberOfStories) : 50;
 
   return (
-<View style={[styles.container, { backgroundColor: useThemeColor(scheme, 'offWhite') }]} onLayout={onLayout}>
-  {stories.length > 0 ? (
-    stories.map((item) => (
-      <TouchableOpacity key={item.objectID} onPress={() => Linking.openURL(item.url)}>
-        <View style={[styles.storyContainer, { borderBottomColor: useThemeColor(scheme, 'lightGrey'), height: calculatedItemHeight }]}>
-          <Text style={[styles.storyTitle, { color: useThemeColor(scheme, 'black') }]} numberOfLines={2}>{item.title}</Text>
-        </View>
-      </TouchableOpacity>
-    ))
-  ) : (
-    <Text style={[styles.loadingFailedText, { color: useThemeColor(scheme, 'black') }]}>Loading Failed</Text>
-  )}
-</View>
+    <View style={[styles.container, { backgroundColor: useThemeColor(scheme, 'offWhite') }]} onLayout={onLayout}>
+      {
+      loading ? (
+        <ActivityIndicator size="large" color={useThemeColor(scheme, 'black')} />
+      ): stories.length > 0 ? (
+        stories.map((item) => (
+          <TouchableOpacity key={item.objectID} onPress={() => Linking.openURL(item.url)}>
+            <View style={[styles.storyContainer, { borderBottomColor: useThemeColor(scheme, 'lightGrey'), height: calculatedItemHeight }]}>
+              <Text style={[styles.storyTitle, { color: useThemeColor(scheme, 'black') }]} numberOfLines={2}>{item.title}</Text>
+            </View>
+          </TouchableOpacity>
+        ))
+      ) : (
+        <Text style={[styles.loadingFailedText, { color: useThemeColor(scheme, 'black') }]}>Loading Failed</Text>
+      )
+      }
+    </View>
   );
 };
 

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import HackerNewsPage from "@/components/HackerNewsPage";
 import { View, Text, StyleSheet } from "react-native";
-import * as SplashScreen from 'expo-splash-screen';
 import { formatDistanceToNow } from 'date-fns';
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
@@ -10,9 +9,9 @@ import { DefaultHNClient } from '@/clients/HNClient';
 export default function Index() {
 
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const handleDataFetched = () => {
+  const handleDataFetched = useCallback(() => {
     setLastUpdated(new Date());
-  };
+  }, []);
   useEffect(() => {
     const interval = setInterval(() => {
       if (lastUpdated) {
@@ -23,7 +22,7 @@ export default function Index() {
   }, [lastUpdated]);
   const scheme = useColorScheme();
 
-  const client = new DefaultHNClient();
+  const client = useMemo(() => new DefaultHNClient(), []);
 
   return (
     <View style={styles.container}>
