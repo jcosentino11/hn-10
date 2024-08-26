@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FlatList, View, Text, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent } from 'react-native';
+import { FlatList, View, Text, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent, Button } from 'react-native';
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
 import { HNClient } from '@/clients/HNClient';
@@ -33,7 +33,6 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
       onDataFetched();
     }
     setInitialLoadComplete(true);
-    setStories([]);
   }, [client, numberOfStories, onDataFetched]);
 
   useEffect(() => {
@@ -67,6 +66,7 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
   const renderLoadingFailedItem = () => (
     <View style={styles.centeredContainer}>
       <Text style={[styles.loadingFailedText, {paddingTop: '50%'}]}>Loading failed. Please try again later.</Text>
+      <Button title="Reload" onPress={onRefresh} />
     </View>
   );
 
