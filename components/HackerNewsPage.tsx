@@ -51,10 +51,11 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
 
   return (
     <View style={[styles.container, { backgroundColor: useThemeColor(scheme, 'offWhite') }]} onLayout={onLayout}>
-      {
-      loading ? (
-        <ActivityIndicator size="large" color={useThemeColor(scheme, 'black')} />
-      ): stories.length > 0 ? (
+      {loading ? (
+        <View style={styles.centeredContainer}>
+          <ActivityIndicator size="large" color={useThemeColor(scheme, 'black')} />
+        </View>
+      ) : stories.length > 0 ? (
         stories.map((item) => (
           <TouchableOpacity key={item.objectID} onPress={() => Linking.openURL(item.url)}>
             <View style={[styles.storyContainer, { borderBottomColor: useThemeColor(scheme, 'lightGrey'), height: calculatedItemHeight }]}>
@@ -63,16 +64,23 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
           </TouchableOpacity>
         ))
       ) : (
-        <Text style={[styles.loadingFailedText, { color: useThemeColor(scheme, 'black') }]}>Loading Failed</Text>
-      )
-      }
+        <View style={styles.centeredContainer}>
+          <Text style={[styles.loadingFailedText, { color: useThemeColor(scheme, 'black') }]}>Loading Failed</Text>
+        </View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    width: '100%',
+  },
+  centeredContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   storyContainer: {
     paddingLeft: 30,
@@ -84,9 +92,6 @@ const styles = StyleSheet.create({
   storyTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  storyInfo: {
-    fontSize: 12,
   },
   loadingFailedText: {
     fontSize: 16,
