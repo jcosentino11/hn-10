@@ -30,7 +30,7 @@ describe('<HackerNewsPage />', () => {
   test('Offline status shown when no stories fetched on first time', async () => {
     render(<HackerNewsPage numberOfStories={10} onDataFetched={() => {}} client={createClientMock(0)} />);
     await waitFor(() => {
-      expect(screen.getByText("Loading Failed")).toBeTruthy();
+      expect(screen.getByText("Loading failed. Please try again later.")).toBeTruthy();
     });
   });
 });
