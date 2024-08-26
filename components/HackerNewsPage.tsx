@@ -21,6 +21,7 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
   const [stories, setStories] = useState<Story[]>([]);
   const [itemHeight, setItemHeight] = useState<number | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const scheme = useColorScheme();
 
   const fetchStories = useCallback(async () => {
@@ -31,6 +32,8 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
       setStories(fetchedStories);
       onDataFetched();
     }
+    setInitialLoadComplete(true);
+    setStories([]);
   }, [client, numberOfStories, onDataFetched]);
 
   useEffect(() => {
@@ -61,24 +64,22 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
     </TouchableOpacity>
   );
 
-  const emptyComponent = () => (
+  const renderLoadingFailedItem = () => (
     <View style={styles.centeredContainer}>
-      <Text style={styles.loadingFailedText}>Loading failed. Please try again later.</Text>
+      <Text style={[styles.loadingFailedText, {paddingTop: '50%'}]}>Loading failed. Please try again later.</Text>
     </View>
   );
 
   return (
-    <View style={{ flex: 1, height: "100%" }}>
-      <FlatList
-        data={stories}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.objectID}
-        onLayout={onLayout}
-        onRefresh={onRefresh}
-        refreshing={refreshing}
-        ListEmptyComponent={emptyComponent}
-      />
-    </View>
+    <FlatList
+      data={stories}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.objectID}
+      onLayout={onLayout}
+      onRefresh={onRefresh}
+      refreshing={refreshing}
+      ListEmptyComponent={initialLoadComplete ? renderLoadingFailedItem : null}
+    />
   );
 };
 
