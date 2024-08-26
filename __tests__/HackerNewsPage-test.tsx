@@ -20,11 +20,17 @@ const createClientMock = (numResults: number) => {
 describe('<HackerNewsPage />', () => {
   test('Stories render after being fetched', async () => {
     const numStories = 10;
-    render(<HackerNewsPage numberOfStories={2} onDataFetched={() => {}} client={createClientMock(numStories)} />);
+    render(<HackerNewsPage numberOfStories={numStories} onDataFetched={() => {}} client={createClientMock(numStories)} />);
     await waitFor(() => {
       for (let i = 1; i <= numStories; i++) {
         expect(screen.getByText(`Story ${i}`)).toBeTruthy();
       }
+    });
+  });
+  test('Offline status shown when no stories fetched on first time', async () => {
+    render(<HackerNewsPage numberOfStories={10} onDataFetched={() => {}} client={createClientMock(0)} />);
+    await waitFor(() => {
+      expect(screen.getByText("Loading Failed")).toBeTruthy();
     });
   });
 });

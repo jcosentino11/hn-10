@@ -1,3 +1,5 @@
+import { fetch } from "@/utils/Fetch";
+
 export interface Story {
   objectID: string;
   title: string;
@@ -5,11 +7,18 @@ export interface Story {
   author: string;
 }
 
-export default class HNClient {
+export interface HNClient {
+  fetchHackerNewsStories(numberOfStories: number): Promise<Story[]>;
+}
+
+export class DefaultHNClient {
+  constructor(private responseTimeout: number = 5000) {}
+
   async fetchHackerNewsStories(numberOfStories: number): Promise<Story[]> {
     try {
       const response = await fetch(
-        `https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=${numberOfStories}`
+        `https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=${numberOfStories}`,
+        {timeout: this.responseTimeout}
       );
       const data = await response.json();
       return data.hits;

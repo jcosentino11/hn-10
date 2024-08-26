@@ -5,13 +5,12 @@ import * as SplashScreen from 'expo-splash-screen';
 import { formatDistanceToNow } from 'date-fns';
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
-import HNClient from '@/clients/HNClient';
+import { DefaultHNClient } from '@/clients/HNClient';
 
 export default function Index() {
 
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const handleDataFetched = () => {
-    SplashScreen.hideAsync();
     setLastUpdated(new Date());
   };
   useEffect(() => {
@@ -24,7 +23,7 @@ export default function Index() {
   }, [lastUpdated]);
   const scheme = useColorScheme();
 
-  const client = new HNClient();
+  const client = new DefaultHNClient();
 
   return (
     <View style={styles.container}>

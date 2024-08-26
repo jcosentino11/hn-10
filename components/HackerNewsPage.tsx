@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent } from 'react-native';
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
-import HNClient from '@/clients/HNClient';
+import { HNClient } from '@/clients/HNClient';
 
 interface Story {
   objectID: string;
@@ -28,7 +28,7 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
       setStories(fetchedStories);
       onDataFetched();
     }
-  }, []);
+  }, [client, numberOfStories, onDataFetched]);
 
   useEffect(() => {
     fetchStories();
@@ -42,17 +42,19 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
   const calculatedItemHeight = itemHeight ? Math.max(50, itemHeight / numberOfStories) : 50;
 
   return (
-    <View style={[styles.container, {backgroundColor: useThemeColor(scheme, 'offWhite')}]} onLayout={onLayout}>
-      {(
-        stories.map((item) => (
-          <TouchableOpacity key={item.objectID} onPress={() => Linking.openURL(item.url)}>
-            <View style={[styles.storyContainer, { borderBottomColor: useThemeColor(scheme, 'lightGrey'), height: calculatedItemHeight }]}>
-              <Text style={[styles.storyTitle, {color: useThemeColor(scheme, 'black')}]} numberOfLines={2}>{item.title}</Text>
-            </View>
-          </TouchableOpacity>
-        ))
-      )}
-    </View>
+<View style={[styles.container, { backgroundColor: useThemeColor(scheme, 'offWhite') }]} onLayout={onLayout}>
+  {stories.length > 0 ? (
+    stories.map((item) => (
+      <TouchableOpacity key={item.objectID} onPress={() => Linking.openURL(item.url)}>
+        <View style={[styles.storyContainer, { borderBottomColor: useThemeColor(scheme, 'lightGrey'), height: calculatedItemHeight }]}>
+          <Text style={[styles.storyTitle, { color: useThemeColor(scheme, 'black') }]} numberOfLines={2}>{item.title}</Text>
+        </View>
+      </TouchableOpacity>
+    ))
+  ) : (
+    <Text style={[styles.loadingFailedText, { color: useThemeColor(scheme, 'black') }]}>Loading Failed</Text>
+  )}
+</View>
   );
 };
 
@@ -73,6 +75,10 @@ const styles = StyleSheet.create({
   },
   storyInfo: {
     fontSize: 12,
+  },
+  loadingFailedText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
