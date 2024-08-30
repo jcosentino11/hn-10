@@ -8,7 +8,7 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ title: "HN 10" }} />
-        <Stack.Screen name="detail" options={{ title: "Story" }}/>
+        <Stack.Screen name="detail"/>
       </Stack>
     </ThemeProvider>
   );
