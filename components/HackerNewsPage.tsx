@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
   },
   storyContainer: {
     flexDirection: 'row',
-    paddingLeft: 30,
-    paddingRight: 30,
+    paddingLeft: 20,
+    paddingRight: 40,
     borderBottomWidth: 1,
     alignItems: 'center',
     overflow: 'hidden',
@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
   storyNumber: {
     fontSize: 16,
     fontWeight: 'bold',
+    width: 25,
     marginRight: 10,
   },
   storyTitle: {
