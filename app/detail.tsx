@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { WebView } from 'react-native-webview';
@@ -7,6 +7,9 @@ import { WebView } from 'react-native-webview';
 export default function HackerNewsPageDetail() {
   const { url, story, title } = useLocalSearchParams();
   const navigation = useNavigation();
+  const colorScheme = useColorScheme();
+
+  const isDarkMode = colorScheme === 'dark';
 
   useEffect(() => {
     navigation.setOptions({
@@ -14,23 +17,31 @@ export default function HackerNewsPageDetail() {
     });
   }, [navigation]);
 
+  const theme = {
+    background: isDarkMode ? '#1C1C1E' : '#F2F2F7',
+    text: isDarkMode ? '#FFFFFF' : '#000000',
+    border: isDarkMode ? '#38383A' : '#E5E5EA',
+    tint: isDarkMode ? '#0A84FF' : '#007AFF',
+    grey: isDarkMode ? '#8E8E93' : '#8E8E93',
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
+      <View style={[styles.header, { borderBottomColor: theme.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>←</Text>
+          <Text style={[styles.backButtonText, { color: theme.tint }]}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Story {story}</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>Story {story}</Text>
       </View>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
       <WebView
         source={{ uri: url }}
         style={styles.webview}
         showsVerticalScrollIndicator={false}
       />
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Hacker News Reader</Text>
+      <View style={[styles.footer, { backgroundColor: theme.background, borderTopColor: theme.border }]}>
+        <Text style={[styles.footerText, { color: theme.grey }]}>HN-10</Text>
       </View>
     </SafeAreaView>
   );
@@ -39,21 +50,18 @@ export default function HackerNewsPageDetail() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5EA',
   },
   backButton: {
     padding: 8,
   },
   backButtonText: {
     fontSize: 24,
-    color: '#007AFF',
   },
   headerTitle: {
     fontSize: 17,
@@ -64,24 +72,19 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     margin: 16,
-    color: '#1C1C1E',
   },
   webview: {
     flex: 1,
-    backgroundColor: 'white',
     borderRadius: 10,
     margin: 16,
     overflow: 'hidden',
   },
   footer: {
     padding: 16,
-    backgroundColor: 'white',
     borderTopWidth: 1,
-    borderTopColor: '#E5E5EA',
   },
   footerText: {
     fontSize: 15,
-    color: '#8E8E93',
     textAlign: 'center',
   },
 });
