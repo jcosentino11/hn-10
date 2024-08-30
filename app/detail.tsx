@@ -1,13 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { WebView } from 'react-native-webview';
 
+const darkReaderScript = `
+  (function() {
+    var darkReaderScript = document.createElement('script');
+    darkReaderScript.src = 'https://cdn.jsdelivr.net/npm/darkreader@4.9.58/darkreader.min.js';
+    darkReaderScript.onload = function() {
+      DarkReader.setFetchMethod(window.fetch);
+      DarkReader.enable({
+        brightness: 100,
+        contrast: 90,
+        sepia: 10
+      });
+    };
+    document.head.appendChild(darkReaderScript);
+  })();
+`;
+
 export default function HackerNewsPageDetail() {
   const { url, story, title } = useLocalSearchParams();
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+  const webViewRef = useRef(null);
 
   const isDarkMode = colorScheme === 'dark';
 
@@ -25,6 +42,12 @@ export default function HackerNewsPageDetail() {
     grey: isDarkMode ? '#8E8E93' : '#8E8E93',
   };
 
+  const injectedJavaScript = isDarkMode ? darkReaderScript : '';
+
+  const onWebViewMessage = (event) => {
+    console.log('WebView message:', event.nativeEvent.data);
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
@@ -36,12 +59,15 @@ export default function HackerNewsPageDetail() {
       </View>
       <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
       <WebView
+        ref={webViewRef}
         source={{ uri: url }}
         style={styles.webview}
         showsVerticalScrollIndicator={false}
+        injectedJavaScript={injectedJavaScript}
+        onMessage={onWebViewMessage}
       />
       <View style={[styles.footer, { backgroundColor: theme.background, borderTopColor: theme.border }]}>
-        <Text style={[styles.footerText, { color: theme.grey }]}>HN-10</Text>
+        <Text style={[styles.footerText, { color: theme.grey }]}>Hacker News Reader</Text>
       </View>
     </SafeAreaView>
   );
