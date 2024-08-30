@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { useNavigation } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
+import { WebView } from 'react-native-webview';
 
 export default function HackerNewsPageDetail() {
   const { url, story, title } = useLocalSearchParams();
@@ -11,20 +12,28 @@ export default function HackerNewsPageDetail() {
     navigation.setOptions({
       title: `Story ${story}`,
     });
-  }, [navigation]);
+  }, [navigation, story]);
 
   return (
-    <View style={styles.container}>
-      <Text>{title}</Text>
-      <Text>{url}</Text>
-    </View>
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>{title}</Text>
+      <WebView source={{ uri: url }} style={styles.webview} />
+      <Text style={styles.title}>Placeholder Footer</Text>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    margin: 10,
+  },
+  webview: {
+    flex: 1,
+    height: 600, // Adjust this as needed to fit the content
   },
 });
