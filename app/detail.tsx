@@ -4,7 +4,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useNavigation } from 'expo-router';
 
 export default function HackerNewsPageDetail() {
-  const { url, story } = useLocalSearchParams();
+  const { url, story, title } = useLocalSearchParams();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -15,7 +15,8 @@ export default function HackerNewsPageDetail() {
 
   return (
     <View style={styles.container}>
-      <Text>Detail Page for URL: {url}</Text>
+      <Text>{title}</Text>
+      <Text>{url}</Text>
     </View>
   );
 }

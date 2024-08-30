@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import HackerNewsPage from "@/components/HackerNewsPage";
+import HackerNewsPage, { SelectedStory }  from "@/components/HackerNewsPage";
 import { View, Text, StyleSheet } from "react-native";
 import { formatDistanceToNow } from 'date-fns';
 import { useThemeColor } from "@/utils/Colors";
@@ -23,8 +23,8 @@ export default function Index() {
   }, [lastUpdated]);
 
   const router = useRouter();
-  const handleStorySelected = useCallback((url: string, story: number) => {
-    router.push(`/detail?url=${encodeURIComponent(url)}&story=${story}`);
+  const handleStorySelected = useCallback((story: SelectedStory) => {
+    router.push(`/detail?url=${encodeURIComponent(story.url)}&story=${story.story}&title=${story.title}`);
   }, []);
   
   const scheme = useColorScheme();
