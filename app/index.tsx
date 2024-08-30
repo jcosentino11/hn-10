@@ -5,6 +5,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
 import { DefaultHNClient } from '@/clients/HNClient';
+import { useRouter } from 'expo-router';
 
 export default function Index() {
 
@@ -20,14 +21,19 @@ export default function Index() {
     }, 60000);
     return () => clearInterval(interval);
   }, [lastUpdated]);
-  const scheme = useColorScheme();
 
+  const router = useRouter();
+  const handleStorySelected = useCallback((url: string, story: number) => {
+    router.push(`/detail?url=${encodeURIComponent(url)}&story=${story}`);
+  }, []);
+  
+  const scheme = useColorScheme();
   const client = useMemo(() => new DefaultHNClient(), []);
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <HackerNewsPage numberOfStories={10} onDataFetched={handleDataFetched} client={client} />
+        <HackerNewsPage numberOfStories={10} onDataFetched={handleDataFetched} onStorySelected={handleStorySelected} client={client} />
       </View>
       <View style={styles.bottomBar}>
         {lastUpdated && (
