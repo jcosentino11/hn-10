@@ -55,9 +55,10 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
 
   const calculatedItemHeight = itemHeight ? Math.max(50, itemHeight / numberOfStories) : 50;
 
-  const renderItem = ({ item }: { item: Story }) => (
+  const renderItem = ({ item, index }: { item: Story, index: number }) => (
     <TouchableOpacity key={item.objectID} onPress={() => Linking.openURL(item.url)}>
       <View style={[styles.storyContainer, { borderBottomColor: useThemeColor(scheme, 'lightGrey'), height: calculatedItemHeight }]}>
+        <Text style={[styles.storyNumber, { color: useThemeColor(scheme, 'black') }]}>{index + 1}.</Text>
         <Text style={[styles.storyTitle, { color: useThemeColor(scheme, 'black') }]} numberOfLines={2}>{item.title}</Text>
       </View>
     </TouchableOpacity>
@@ -94,15 +95,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   storyContainer: {
+    flexDirection: 'row',
     paddingLeft: 30,
     paddingRight: 30,
     borderBottomWidth: 1,
-    justifyContent: 'center',
+    alignItems: 'center',
     overflow: 'hidden',
+  },
+  storyNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginRight: 10,
   },
   storyTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    flexShrink: 1,
   },
   loadingFailedText: {
     fontSize: 16,
