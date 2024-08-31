@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme, Button } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { WebView } from 'react-native-webview';
@@ -44,10 +44,6 @@ export default function HackerNewsPageDetail() {
 
   const injectedJavaScript = isDarkMode ? darkReaderScript : '';
 
-  const onWebViewMessage = (event) => {
-    console.log('WebView message:', event.nativeEvent.data);
-  };
-
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
@@ -55,20 +51,19 @@ export default function HackerNewsPageDetail() {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={[styles.backButtonText, { color: theme.tint }]}>←</Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.text }]}>Story {story}</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>{story}.   {title}</Text>
       </View>
-      <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
       <WebView
         ref={webViewRef}
+        mediaPlaybackRequiresUserAction={true}
+        allowsInlineMediaPlayback={true}
+        allowsFullscreenVideo={false}
         source={{ uri: url }}
         style={styles.webview}
-        showsVerticalScrollIndicator={false}
         injectedJavaScript={injectedJavaScript}
-        onMessage={onWebViewMessage}
+        javaScriptCanOpenWindowsAutomatically={false}
+        onMessage={(event) => {}}
       />
-      <View style={[styles.footer, { backgroundColor: theme.background, borderTopColor: theme.border }]}>
-        <Text style={[styles.footerText, { color: theme.grey }]}>Hacker News Reader</Text>
-      </View>
     </SafeAreaView>
   );
 }
@@ -93,6 +88,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     marginLeft: 16,
+    paddingRight: 80
   },
   title: {
     fontSize: 22,
@@ -104,13 +100,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 16,
     overflow: 'hidden',
-  },
-  footer: {
-    padding: 16,
-    borderTopWidth: 1,
-  },
-  footerText: {
-    fontSize: 15,
-    textAlign: 'center',
   },
 });
