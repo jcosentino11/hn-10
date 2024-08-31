@@ -11,6 +11,11 @@ interface Story {
   author: string;
 }
 
+const getHostname = (story: Story) => {
+  const { hostname } = new URL(story.url);
+  return hostname;
+};
+
 export interface SelectedStory {
   story: number;
   url: string;
@@ -86,7 +91,7 @@ const renderItem = ({ item, index }: { item: Story, index: number }) => (
         <Text style={[styles.storyNumber, { color: tintColor }]}>{index + 1}.</Text>
         <View style={styles.storyTextContainer}>
           <Text style={[styles.storyTitle, { color: textColor }]} numberOfLines={2}>{item.title}</Text>
-          <Text style={[styles.storySubtitle, { color: subtitleColor }]}>{item.author}</Text>
+          <Text style={[styles.storySubtitle, { color: subtitleColor }]}>{getHostname(item)}</Text>
         </View>
       </View>
     </TouchableOpacity>

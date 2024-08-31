@@ -33,6 +33,8 @@ export default function HackerNewsPageDetail() {
   const borderColor = useThemeColor(colorScheme, 'border');
   const tintColor = useThemeColor(colorScheme, 'tint');
   const cardColor = useThemeColor(colorScheme, 'card');
+  const subtitleColor = useThemeColor(colorScheme, 'subtitle');
+
 
   useEffect(() => {
     navigation.setOptions({
@@ -51,7 +53,11 @@ export default function HackerNewsPageDetail() {
         </TouchableOpacity>
         <View style={styles.headerTextContainer}>
           <Text style={[styles.headerNumber, { color: tintColor }]}>{story}.</Text>
-          <Text style={[styles.headerTitle, { color: textColor }]} numberOfLines={1}>{title}</Text>
+          <View>
+            <Text style={[styles.headerTitle, { color: textColor }]} numberOfLines={1}>{title}</Text>
+          
+            <Text style={[styles.headerSubtitle, { color: subtitleColor }]} numberOfLines={1}>{typeof url == 'string' ? new URL(url).hostname : ''}</Text>
+          </View>
         </View>
       </View>
       <View style={styles.webViewContainer}>
@@ -94,6 +100,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 8,
+    marginRight: 30,
   },
   headerNumber: {
     fontSize: 18,
@@ -104,6 +111,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     flex: 1,
+  },
+  headerSubtitle: {
+    fontSize: 12,
   },
   webViewContainer: {
     flex: 1,
