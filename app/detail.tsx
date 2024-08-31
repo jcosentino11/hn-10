@@ -1,9 +1,10 @@
+// HackerNewsPageDetail.tsx
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme, Dimensions } from 'react-native';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { WebView } from 'react-native-webview';
 import { useThemeColor } from "@/utils/Colors";
+import { Feather } from '@expo/vector-icons';
 
 const darkReaderScript = `
   (function() {
@@ -28,44 +29,50 @@ export default function HackerNewsPageDetail() {
   const webViewRef = useRef(null);
   const isDarkMode = colorScheme === 'dark';
 
+  const backgroundColor = useThemeColor(colorScheme, 'background');
+  const textColor = useThemeColor(colorScheme, 'text');
+  const borderColor = useThemeColor(colorScheme, 'border');
+  const tintColor = useThemeColor(colorScheme, 'tint');
+  const cardColor = useThemeColor(colorScheme, 'card');
+
   useEffect(() => {
     navigation.setOptions({
       headerShown: false,
     });
   }, [navigation]);
 
-  const theme = {
-    background: useThemeColor(colorScheme, 'background'),
-    text: useThemeColor(colorScheme, 'text'),
-    border: useThemeColor(colorScheme, 'border'),
-    tint: useThemeColor(colorScheme, 'tint'),
-  };
-
   const injectedJavaScript = isDarkMode ? darkReaderScript : '';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
-      <View style={[styles.header, { borderBottomColor: theme.border }]}>
+      <View style={[styles.header, { backgroundColor: cardColor, borderBottomColor: borderColor }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={[styles.backButtonText, { color: theme.tint }]}>←</Text>
+          <Feather name="arrow-left" size={24} color={tintColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>{story}. {title}</Text>
+        <View style={styles.headerTextContainer}>
+          <Text style={[styles.headerNumber, { color: tintColor }]}>{story}.</Text>
+          <Text style={[styles.headerTitle, { color: textColor }]} numberOfLines={1}>{title}</Text>
+        </View>
       </View>
-      <WebView
-        ref={webViewRef}
-        mediaPlaybackRequiresUserAction={true}
-        allowsInlineMediaPlayback={true}
-        allowsFullscreenVideo={false}
-        source={{ uri: url }}
-        style={styles.webview}
-        injectedJavaScript={injectedJavaScript}
-        javaScriptCanOpenWindowsAutomatically={false}
-        onMessage={(event) => {}}
-      />
+      <View style={styles.webViewContainer}>
+        <WebView
+          ref={webViewRef}
+          source={{ uri: url }}
+          style={styles.webview}
+          injectedJavaScript={injectedJavaScript}
+          onMessage={(event) => {}}
+          mediaPlaybackRequiresUserAction={true}
+          allowsInlineMediaPlayback={true}
+          allowsFullscreenVideo={false}
+          javaScriptCanOpenWindowsAutomatically={false}
+        />
+      </View>
     </SafeAreaView>
   );
 }
+
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -76,23 +83,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   backButton: {
     padding: 8,
   },
-  backButtonText: {
-    fontSize: 24,
+  headerTextContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  headerNumber: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginRight: 8,
   },
   headerTitle: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '600',
-    marginLeft: 16,
-    paddingRight: 80
+    flex: 1,
+  },
+  webViewContainer: {
+    flex: 1,
+    margin: 16,
+    borderRadius: 8,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   webview: {
     flex: 1,
-    borderRadius: 10,
-    margin: 16,
-    overflow: 'hidden',
   },
 });
