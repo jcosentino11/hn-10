@@ -1,4 +1,3 @@
-// utils/Colors.ts
 import { useColorScheme } from 'react-native';
 
 type ColorName = 'background' | 'text' | 'border' | 'tint' | 'subtitle' | 'card' | 'shadow';

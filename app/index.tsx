@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import HackerNewsPage, { SelectedStory } from "@/components/HackerNewsPage";
-import { View, Text, StyleSheet, SafeAreaView, StatusBar } from "react-native";
-import { formatDistanceToNow } from 'date-fns';
+import { View, StyleSheet, SafeAreaView, StatusBar } from "react-native";
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
 import { DefaultHNClient } from '@/clients/HNClient';

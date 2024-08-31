@@ -1,4 +1,3 @@
-// HackerNewsPageDetail.tsx
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme, Dimensions } from 'react-native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
@@ -61,7 +60,7 @@ export default function HackerNewsPageDetail() {
           source={{ uri: url }}
           style={styles.webview}
           injectedJavaScript={injectedJavaScript}
-          onMessage={(event) => {}}
+          onMessage={() => {}}
           mediaPlaybackRequiresUserAction={true}
           allowsInlineMediaPlayback={true}
           allowsFullscreenVideo={false}
@@ -71,8 +70,6 @@ export default function HackerNewsPageDetail() {
     </SafeAreaView>
   );
 }
-
-const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
