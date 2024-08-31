@@ -11,13 +11,20 @@ interface Story {
   author: string;
 }
 
+export interface SelectedStory {
+  story: number;
+  url: string;
+  title: string
+}
+
 interface HackerNewsPageProps {
   numberOfStories: number;
   onDataFetched: () => void;
+  onStorySelected: (story: SelectedStory) => void;
   client: HNClient;
 }
 
-const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onDataFetched, client }) => {
+const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onDataFetched, onStorySelected, client }) => {
   const [stories, setStories] = useState<Story[]>([]);
   const [itemHeight, setItemHeight] = useState<number | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -56,7 +63,7 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
   const calculatedItemHeight = itemHeight ? Math.max(50, itemHeight / numberOfStories) : 50;
 
   const renderItem = ({ item, index }: { item: Story, index: number }) => (
-    <TouchableOpacity key={item.objectID} onPress={() => Linking.openURL(item.url)}>
+    <TouchableOpacity key={item.objectID} onPress={() => onStorySelected({story:(index + 1), title:item.title, url:item.url})}>
       <View style={[styles.storyContainer, { borderBottomColor: useThemeColor(scheme, 'lightGrey'), height: calculatedItemHeight }]}>
         <Text style={[styles.storyNumber, { color: useThemeColor(scheme, 'black') }]}>{index + 1}.</Text>
         <Text style={[styles.storyTitle, { color: useThemeColor(scheme, 'black') }]} numberOfLines={2}>{item.title}</Text>
