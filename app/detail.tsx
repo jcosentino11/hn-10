@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme, Button } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { WebView } from 'react-native-webview';
+import { useThemeColor } from "@/utils/Colors";
 
 const darkReaderScript = `
   (function() {
@@ -25,7 +26,6 @@ export default function HackerNewsPageDetail() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const webViewRef = useRef(null);
-
   const isDarkMode = colorScheme === 'dark';
 
   useEffect(() => {
@@ -35,11 +35,10 @@ export default function HackerNewsPageDetail() {
   }, [navigation]);
 
   const theme = {
-    background: isDarkMode ? '#1C1C1E' : '#F2F2F7',
-    text: isDarkMode ? '#FFFFFF' : '#000000',
-    border: isDarkMode ? '#38383A' : '#E5E5EA',
-    tint: isDarkMode ? '#0A84FF' : '#007AFF',
-    grey: isDarkMode ? '#8E8E93' : '#8E8E93',
+    background: useThemeColor(colorScheme, 'background'),
+    text: useThemeColor(colorScheme, 'text'),
+    border: useThemeColor(colorScheme, 'border'),
+    tint: useThemeColor(colorScheme, 'tint'),
   };
 
   const injectedJavaScript = isDarkMode ? darkReaderScript : '';
@@ -51,7 +50,7 @@ export default function HackerNewsPageDetail() {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={[styles.backButtonText, { color: theme.tint }]}>←</Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>{story}.   {title}</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>{story}. {title}</Text>
       </View>
       <WebView
         ref={webViewRef}
@@ -89,11 +88,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 16,
     paddingRight: 80
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    margin: 16,
   },
   webview: {
     flex: 1,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FlatList, View, Text, StyleSheet, TouchableOpacity, Linking, LayoutChangeEvent, Button } from 'react-native';
+import { FlatList, View, Text, StyleSheet, TouchableOpacity, LayoutChangeEvent, Button } from 'react-native';
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
 import { HNClient } from '@/clients/HNClient';
@@ -29,12 +29,19 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
   const [itemHeight, setItemHeight] = useState<number | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
   const scheme = useColorScheme();
+  const backgroundColor = useThemeColor(scheme, 'background');
+  const textColor = useThemeColor(scheme, 'text');
+  const borderColor = useThemeColor(scheme, 'border');
+  const tintColor = useThemeColor(scheme, 'tint');
+  const subtitleColor = useThemeColor(scheme, 'subtitle');
+  const cardColor = useThemeColor(scheme, 'card');
+  const shadowColor = useThemeColor(scheme, 'shadow');
+
 
   const fetchStories = useCallback(async () => {
-    const fetchedStories = await client.fetchHackerNewsStories(
-      numberOfStories
-    );
+    const fetchedStories = await client.fetchHackerNewsStories(numberOfStories);
     if (fetchedStories) {
       setStories(fetchedStories);
       onDataFetched();
@@ -62,19 +69,33 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
 
   const calculatedItemHeight = itemHeight ? Math.max(50, itemHeight / numberOfStories) : 50;
 
-  const renderItem = ({ item, index }: { item: Story, index: number }) => (
-    <TouchableOpacity key={item.objectID} onPress={() => onStorySelected({story:(index + 1), title:item.title, url:item.url})}>
-      <View style={[styles.storyContainer, { borderBottomColor: useThemeColor(scheme, 'lightGrey'), height: calculatedItemHeight }]}>
-        <Text style={[styles.storyNumber, { color: useThemeColor(scheme, 'black') }]}>{index + 1}.</Text>
-        <Text style={[styles.storyTitle, { color: useThemeColor(scheme, 'black') }]} numberOfLines={2}>{item.title}</Text>
+const renderItem = ({ item, index }: { item: Story, index: number }) => (
+    <TouchableOpacity 
+      key={item.objectID} 
+      onPress={() => onStorySelected({story:(index + 1), title:item.title, url:item.url})}
+      style={[
+        styles.storyContainer, 
+        { 
+          backgroundColor: cardColor,
+          borderColor: borderColor,
+          shadowColor: shadowColor,
+        }
+      ]}
+    >
+      <View style={styles.storyContent}>
+        <Text style={[styles.storyNumber, { color: tintColor }]}>{index + 1}.</Text>
+        <View style={styles.storyTextContainer}>
+          <Text style={[styles.storyTitle, { color: textColor }]} numberOfLines={2}>{item.title}</Text>
+          <Text style={[styles.storySubtitle, { color: subtitleColor }]}>{item.author}</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
 
   const renderLoadingFailedItem = () => (
-    <View style={styles.centeredContainer}>
-      <Text style={[styles.loadingFailedText, {paddingTop: '50%'}]}>Loading failed. Please try again later.</Text>
-      <Button title="Reload" onPress={onRefresh} />
+    <View style={[styles.centeredContainer, { backgroundColor: backgroundColor }]}>
+      <Text style={[styles.loadingFailedText, { color: textColor }]}>Loading failed. Please try again later.</Text>
+      <Button title="Reload" onPress={onRefresh} color={tintColor} />
     </View>
   );
 
@@ -87,42 +108,56 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
       onRefresh={onRefresh}
       refreshing={refreshing}
       ListEmptyComponent={initialLoadComplete ? renderLoadingFailedItem : null}
+      contentContainerStyle={[styles.listContainer, { backgroundColor: backgroundColor }]}
     />
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: '100%',
+  listContainer: {
+    paddingVertical: 10,
   },
   centeredContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
   },
   storyContainer: {
-    flexDirection: 'row',
-    paddingLeft: 20,
-    paddingRight: 40,
-    borderBottomWidth: 1,
-    alignItems: 'center',
+    marginHorizontal: 10,
+    marginBottom: 10,
+    borderRadius: 8,
+    borderWidth: 1,
     overflow: 'hidden',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  storyContent: {
+    flexDirection: 'row',
+    padding: 15,
   },
   storyNumber: {
     fontSize: 16,
     fontWeight: 'bold',
-    width: 25,
-    marginRight: 10,
+    width: 30,
+  },
+  storyTextContainer: {
+    flex: 1,
   },
   storyTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    flexShrink: 1,
+    marginBottom: 4,
+  },
+  storySubtitle: {
+    fontSize: 12,
   },
   loadingFailedText: {
     fontSize: 16,
     fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
 
