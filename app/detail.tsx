@@ -92,7 +92,6 @@ export default function HackerNewsPageDetail() {
           <Text style={{ color: subtitleColor }}>Share</Text>
         </TouchableOpacity>
       </View>
-      <LoginModal />
     </SafeAreaView>
   );
 }
