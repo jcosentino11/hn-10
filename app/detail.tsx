@@ -7,6 +7,7 @@ import { Feather } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Header from '@/components/Header';
 import { LoginContext } from '@/components/LoginProvider';
+import { SettingsContext } from '@/components/SettingsProvider';
 
 const darkReaderScript = `
   (function() {
@@ -30,6 +31,7 @@ export default function HackerNewsPageDetail() {
   // TODO load favorite based on login
   const [isFavorited, setIsFavorited] = useState(false);
 
+  const settingsContext = useContext(SettingsContext);
   const webViewRef = useRef(null);
 
   const searchParamAsString: ((param: string | string[]) => string | undefined) = 
@@ -71,6 +73,36 @@ export default function HackerNewsPageDetail() {
 
   const injectedJavaScript = isDarkMode ? darkReaderScript : '';
 
+  const renderContent = () => {
+    if (settingsContext.selectedBrowser == 'In App') {
+      const urlStr = searchParamAsString(url);
+      if (urlStr) {
+        return (
+          <View style={styles.webViewContainer}>
+            <WebView
+              ref={webViewRef}
+              source={{ uri: urlStr }}
+              style={styles.webview}
+              injectedJavaScript={injectedJavaScript}
+              onMessage={() => {}}
+              mediaPlaybackRequiresUserAction={true}
+              allowsInlineMediaPlayback={true}
+              allowsFullscreenVideo={false}
+              javaScriptCanOpenWindowsAutomatically={false}
+            />
+        </View>
+        );
+      }
+    }
+    if (settingsContext.selectedBrowser == 'Default') {
+      // TODO
+      return (
+        null
+      );
+    }
+    return (null);
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
@@ -85,21 +117,7 @@ export default function HackerNewsPageDetail() {
           title: searchParamAsString(title),
         }}
       />
-      <View style={styles.webViewContainer}>
-        { searchParamAsString(url) &&
-          <WebView
-            ref={webViewRef}
-            source={{ uri: url }}
-            style={styles.webview}
-            injectedJavaScript={injectedJavaScript}
-            onMessage={() => {}}
-            mediaPlaybackRequiresUserAction={true}
-            allowsInlineMediaPlayback={true}
-            allowsFullscreenVideo={false}
-            javaScriptCanOpenWindowsAutomatically={false}
-          />
-        }
-      </View>
+      {renderContent()}
       <View style={styles.footer}>
         <TouchableOpacity onPress={toggleFavorite} style={styles.footerButton}>
           {isFavorited ? 
