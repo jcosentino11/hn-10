@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  useColorScheme,
+  useColorScheme
 } from "react-native";
 import { useNavigation, Link } from "expo-router";
 import { useThemeColor } from "@/utils/Colors";

@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme, Share } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme, Share, Linking, Button } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { WebView } from 'react-native-webview';
 import { useThemeColor } from "@/utils/Colors";
@@ -74,30 +74,33 @@ export default function HackerNewsPageDetail() {
   const injectedJavaScript = isDarkMode ? darkReaderScript : '';
 
   const renderContent = () => {
+    const urlStr = searchParamAsString(url);
+    if (!urlStr) {
+      return (null);
+    }
+
     if (settingsContext.selectedBrowser == 'In App') {
-      const urlStr = searchParamAsString(url);
-      if (urlStr) {
-        return (
-          <View style={styles.webViewContainer}>
-            <WebView
-              ref={webViewRef}
-              source={{ uri: urlStr }}
-              style={styles.webview}
-              injectedJavaScript={injectedJavaScript}
-              onMessage={() => {}}
-              mediaPlaybackRequiresUserAction={true}
-              allowsInlineMediaPlayback={true}
-              allowsFullscreenVideo={false}
-              javaScriptCanOpenWindowsAutomatically={false}
-            />
-        </View>
-        );
-      }
+      return (
+        <View style={styles.webViewContainer}>
+          <WebView
+            ref={webViewRef}
+            source={{ uri: urlStr }}
+            style={styles.webview}
+            injectedJavaScript={injectedJavaScript}
+            onMessage={() => {}}
+            mediaPlaybackRequiresUserAction={true}
+            allowsInlineMediaPlayback={true}
+            allowsFullscreenVideo={false}
+            javaScriptCanOpenWindowsAutomatically={false}
+          />
+      </View>
+      );
     }
     if (settingsContext.selectedBrowser == 'Default') {
-      // TODO
       return (
-        null
+        <View style={[styles.webViewContainer, {paddingTop: '50%'}]}>
+          <Button title="Open in Default Browser" onPress={() => Linking.openURL(urlStr)} />
+        </View>
       );
     }
     return (null);
@@ -145,6 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     elevation: 3,
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
