@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   headerNumber: {
     fontSize: 18,
     fontWeight: "bold",
-    marginRight: 8,
+    marginRight: 16,
   },
   headerTitle: {
     fontSize: 18,
