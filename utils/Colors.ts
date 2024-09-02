@@ -1,6 +1,6 @@
 import { useColorScheme } from 'react-native';
 
-type ColorName = 'background' | 'text' | 'border' | 'tint' | 'subtitle' | 'card' | 'shadow';
+type ColorName = 'background' | 'text' | 'border' | 'tint' | 'subtitle' | 'card' | 'shadow' | 'error';
 
 const lightColors: Record<ColorName, string> = {
   background: '#F0F4F8',
@@ -10,6 +10,7 @@ const lightColors: Record<ColorName, string> = {
   subtitle: '#718096',
   card: '#FFFFFF',
   shadow: 'rgba(0, 0, 0, 0.1)',
+  error: '#E53E3E',
 };
 
 const darkColors: Record<ColorName, string> = {
@@ -20,6 +21,7 @@ const darkColors: Record<ColorName, string> = {
   subtitle: '#A0AEC0',
   card: '#2D3748',
   shadow: 'rgba(255, 255, 255, 0.1)',
+  error: '#FEB2B2',
 };
 
 export const useThemeColor = (

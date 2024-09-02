@@ -4,6 +4,7 @@ import { fetch } from "@/utils/Fetch";
 class LoginState {
   showLoginModal: boolean = false;
   isLoggedIn: boolean = false;
+  showLoginError: boolean = false;
   login!: (username: string, password: string) => Promise<void>;
   logout!: () => Promise<void>;
   showModal!: (show: boolean) => void;
@@ -17,11 +18,16 @@ interface Props {
 
 export const LoginProvider: React.FC<Props> = ({ children }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showLoginError, setShowLoginError] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
     loadIsLoggedIn();
   }, []);
+
+  useEffect(() => {
+    setShowLoginError(false);
+  }, [showLoginModal])
 
   const loadIsLoggedIn = async () => {
     if (await alreadyLoggedIn()) {
@@ -38,34 +44,38 @@ export const LoginProvider: React.FC<Props> = ({ children }) => {
     if (await alreadyLoggedIn()) {
       return;
     }
-
-    const loginResult = await fetchHNPage('login', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-      body: `goto=news&acct=${encodeURIComponent(username)}&pw=${encodeURIComponent(password)}`,
-    });
-
-    if (!loginResult.match(/logout\?auth/)) {
-      return;
+    try {
+      const loginResult = await fetchHNPage('login', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+        },
+        body: `goto=news&acct=${encodeURIComponent(username)}&pw=${encodeURIComponent(password)}`,
+      });
+  
+      if (!loginResult.match(/logout\?auth/)) {
+        setShowLoginError(true);
+        return;
+      }
+  
+      setIsLoggedIn(true);
+      setShowLoginModal(false);
+    } catch {
+      setShowLoginError(true);
     }
-
-    setIsLoggedIn(true);
-    setShowLoginModal(false);
   }, []);
 
   const logout = useCallback(async () => {
-    if (isLoggedIn) {
+    try {
       const token = await fetchAuthToken();
-      if (token == null) {
-        setIsLoggedIn(false);
-      } else {
+      if (token != null) {
         await fetchHNPage(`logout?auth=${encodeURIComponent(token)}`, {});
         if (!await alreadyLoggedIn()) {
           setIsLoggedIn(false);
         }
       }
+    } catch {
+      // ignore
     }
     setShowLoginModal(false);
   }, []);
@@ -105,6 +115,7 @@ export const LoginProvider: React.FC<Props> = ({ children }) => {
       value={{
         showLoginModal,
         isLoggedIn,
+        showLoginError,
         login,
         logout,
         showModal,
