@@ -13,7 +13,10 @@ import { LoginContext } from "./LoginProvider";
 import LoginModal from "./LoginModal";
 
 type Props = {
-    isMainPage: boolean
+    title: string | undefined
+    showBackIcon: boolean
+    showLoginIcon: boolean
+    showOptionsIcon: boolean
     details: {
         url: string | undefined;
         story: string | undefined;
@@ -40,14 +43,14 @@ const Header: React.FC<Props> = (props) => {
   }, [navigation]);
 
   const renderBackButton = () =>
-    props.isMainPage ? null : (
+    props.showBackIcon ? (
         <TouchableOpacity
         onPress={() => navigation.goBack()}
         style={styles.backButton}
       >
         <Feather name="arrow-left" size={24} color={tintColor} />
       </TouchableOpacity>
-    );
+    ) : null;
 
   const renderStoryNumber = () => {
     if (props.details && props.details.story && props.details.story.trim()) {
@@ -62,18 +65,20 @@ const Header: React.FC<Props> = (props) => {
   }
 
   const renderTitle = () => {
-    if (props.details && props.details.title && props.details.title.trim()) {
-      return (
-        <Text
-            style={[styles.headerTitle, { color: textColor }]}
-            numberOfLines={1}
-          >
-            {props.details.title}
-          </Text>
-      )
-    } else {
-      return (null);
+    const titleText = (text: string) =>       
+      <Text
+        style={[styles.headerTitle, { color: textColor }]}
+        numberOfLines={1}
+      >
+        {text}
+      </Text>
+    if (props.title && props.title.trim()) {
+      return titleText(props.title.trim());
     }
+    if (props.details && props.details.title && props.details.title.trim()) {
+      return titleText(props.details.title.trim());
+    }
+    return (null);
   }
 
   const renderSubtitle = () => {
@@ -91,25 +96,25 @@ const Header: React.FC<Props> = (props) => {
     }
   }
 
-  const renderHeaderText = () =>
-    props.isMainPage ? (
+  const renderHeaderText = () => {
+    if (props.title && props.title.trim()) {
+      return (
         <View style={styles.headerTextContainer}>
-            <Text
-                style={[styles.headerTitle, { color: textColor }]}
-                numberOfLines={1}
-            >
-                HN-10
-            </Text>
-        </View>    
-    ) : (
-      <View style={styles.headerTextContainer}>
-        {renderStoryNumber()}
-        <View>
           {renderTitle()}
-          {renderSubtitle()}
         </View>
-      </View>
-    );
+      )
+    } else {
+      return (
+        <View style={styles.headerTextContainer}>
+          {renderStoryNumber()}
+          <View>
+            {renderTitle()}
+            {renderSubtitle()}
+          </View>
+        </View>
+      )
+    }
+  };
 
   return (
     <View>
