@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FlatList, View, Text, StyleSheet, TouchableOpacity, LayoutChangeEvent, Button } from 'react-native';
+import { FlatList, View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
 import { HNClient } from '@/clients/HNClient';
+
 
 interface Story {
   objectID: string;
@@ -46,7 +47,6 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
   const cardColor = useThemeColor(scheme, 'card');
   const shadowColor = useThemeColor(scheme, 'shadow');
 
-
   const fetchStories = useCallback(async () => {
     const fetchedStories = await client.fetchHackerNewsStories(numberOfStories);
     if (fetchedStories) {
@@ -54,11 +54,11 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
       onDataFetched();
     }
     setInitialLoadComplete(true);
-  }, [client, numberOfStories, onDataFetched]);
+  }, [numberOfStories]);
 
   useEffect(() => {
     onRefresh();
-  }, [numberOfStories, client, onDataFetched]);
+  }, [numberOfStories]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
