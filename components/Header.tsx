@@ -4,7 +4,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  useColorScheme
+  useColorScheme,
+  Linking
 } from "react-native";
 import { useNavigation, Link } from "expo-router";
 import { useThemeColor } from "@/utils/Colors";
@@ -96,12 +97,14 @@ const Header: React.FC<Props> = (props) => {
   const renderSubtitle = () => {
     if (props.details && props.details.url && props.details.url.trim()) {
       return (
-        <Text
-          style={[styles.headerSubtitle, { color: subtitleColor }]}
-          numberOfLines={1}
-        >
-          {getHostname(props.details.url)}
-        </Text>
+        <TouchableOpacity onPress={() => Linking.openURL(props.details.url)}>
+          <Text
+            style={[styles.headerSubtitle, { color: subtitleColor }]}
+            numberOfLines={1}
+          >
+            {getHostname(props.details.url)}
+          </Text>
+        </TouchableOpacity>
       )
     } else {
       return (null);
