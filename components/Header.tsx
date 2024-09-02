@@ -116,16 +116,9 @@ const Header: React.FC<Props> = (props) => {
     }
   };
 
-  return (
-    <View>
-      <View
-        style={[
-          styles.header,
-          { backgroundColor: cardColor, borderBottomColor: borderColor },
-        ]}
-      >
-        {renderBackButton()}
-        {renderHeaderText()}
+  const renderLogin = () => {
+    if (props.showLoginIcon) {
+      return (
         <TouchableOpacity
           onPress={() => loginContext.showModal(true)}
           style={styles.headerIcon}
@@ -136,11 +129,36 @@ const Header: React.FC<Props> = (props) => {
             color={tintColor}
           />
         </TouchableOpacity>
+      );
+    }
+    return (null);
+  };
+
+  const renderSettings = () => {
+    if (props.showOptionsIcon) {
+      return (
         <Link href="/settings" asChild={true}>
           <TouchableOpacity style={styles.headerIcon}>
             <Feather name="settings" size={24} color={tintColor} />
           </TouchableOpacity>
         </Link>
+      );
+    }
+    return (null);
+  }
+
+  return (
+    <View>
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: cardColor, borderBottomColor: borderColor },
+        ]}
+      >
+        {renderBackButton()}
+        {renderHeaderText()}
+        {renderLogin()}
+        {renderSettings()}
       </View>
       <LoginModal />
     </View>
