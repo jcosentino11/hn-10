@@ -8,7 +8,6 @@ export default function SettingsPage() {
   const colorScheme = useColorScheme();
   const [isDarkMode, setIsDarkMode] = useState(colorScheme === 'dark');
   const [selectedBrowser, setSelectedBrowser] = useState('in-app');
-  const [fontSize, setFontSize] = useState('medium');
 
   const backgroundColor = useThemeColor(colorScheme, 'background');
   const textColor = useThemeColor(colorScheme, 'text');
@@ -23,11 +22,6 @@ export default function SettingsPage() {
   const changeBrowser = (browser) => {
     setSelectedBrowser(browser);
     // Implement logic to change default browser
-  };
-
-  const changeFontSize = (size) => {
-    setFontSize(size);
-    // Implement logic to change app-wide font size
   };
 
   const handleTip = () => {
@@ -66,20 +60,6 @@ export default function SettingsPage() {
           >
             <Text style={[styles.settingText, { color: textColor }]}>{browser}</Text>
             {selectedBrowser === browser && <Feather name="check" size={24} color={tintColor} />}
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <View style={[styles.section, { backgroundColor: cardColor }]}>
-        <Text style={[styles.sectionTitle, { color: textColor }]}>Font Size</Text>
-        {['small', 'medium', 'large'].map((size) => (
-          <TouchableOpacity 
-            key={size} 
-            style={styles.setting} 
-            onPress={() => changeFontSize(size)}
-          >
-            <Text style={[styles.settingText, { color: textColor }]}>{size}</Text>
-            {fontSize === size && <Feather name="check" size={24} color={tintColor} />}
           </TouchableOpacity>
         ))}
       </View>
