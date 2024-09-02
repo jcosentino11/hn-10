@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert, SafeAreaView, StatusBar, Appearance } from 'react-native';
 import { useColorScheme } from 'react-native';
 import { useThemeColor } from "@/utils/Colors";
 import { Feather } from '@expo/vector-icons';
 import Header from '@/components/Header';
+import { SettingsContext } from '@/components/SettingsProvider';
+
+export type SelectedBrowser = 'In App' | 'Default';
 
 export default function SettingsPage() {
   const colorScheme = useColorScheme();
   const [isDarkMode, setIsDarkMode] = useState(colorScheme === 'dark');
-  const [selectedBrowser, setSelectedBrowser] = useState('in-app');
+
+  const settingsContext = useContext(SettingsContext);
 
   const backgroundColor = useThemeColor(colorScheme, 'background');
   const textColor = useThemeColor(colorScheme, 'text');
@@ -19,11 +23,6 @@ export default function SettingsPage() {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
     Appearance.setColorScheme(newMode ? 'dark' : 'light');
-  };
-
-  const changeBrowser = (browser) => {
-    setSelectedBrowser(browser);
-    // Implement logic to change default browser
   };
 
   const handleTip = () => {
@@ -60,14 +59,14 @@ export default function SettingsPage() {
 
         <View style={[styles.section, { backgroundColor: cardColor }]}>
           <Text style={[styles.sectionTitle, { color: textColor }]}>Browser</Text>
-          {['in-app', 'google', 'safari'].map((browser) => (
+          {['In App', 'Default'].map((browser) => (
             <TouchableOpacity 
               key={browser} 
               style={styles.setting} 
-              onPress={() => changeBrowser(browser)}
+              onPress={() => settingsContext.setSelectedBrowser(browser as SelectedBrowser)}
             >
               <Text style={[styles.settingText, { color: textColor }]}>{browser}</Text>
-              {selectedBrowser === browser && <Feather name="check" size={24} color={tintColor} />}
+              {settingsContext.selectedBrowser === browser && <Feather name="check" size={24} color={tintColor} />}
             </TouchableOpacity>
           ))}
         </View>
