@@ -5,7 +5,6 @@ import { WebView } from 'react-native-webview';
 import { useThemeColor } from "@/utils/Colors";
 import { Feather } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import LoginModal from '@/components/LoginModal';
 import Header from '@/components/Header';
 import { LoginContext } from '@/components/LoginProvider';
 
@@ -32,6 +31,18 @@ export default function HackerNewsPageDetail() {
   const [isFavorited, setIsFavorited] = useState(false);
 
   const webViewRef = useRef(null);
+
+  const searchParamAsString: ((param: string | string[]) => string | undefined) = 
+    (param: string | string[]) => {
+      if (Array.isArray(param)) {
+        return undefined;
+      }
+      param = param.trim();
+      if (param.length == 0 || param == 'undefined') {
+        return undefined;
+      }
+      return param;
+    };
 
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
@@ -63,22 +74,26 @@ export default function HackerNewsPageDetail() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
-      {/* TODO make each header part optional so we don't need to rely on filtering out story types */}
-      {typeof url == 'string' && typeof story == 'string' && typeof title == 'string' && 
-        <Header details={{url: new URL(url), story: story, title: title}} />
-      }
+      <Header 
+        isMainPage={false} 
+        details={{
+          url: searchParamAsString(url), 
+          story: searchParamAsString(story), 
+          title: searchParamAsString(title)}} />
       <View style={styles.webViewContainer}>
-        <WebView
-          ref={webViewRef}
-          source={{ uri: url }}
-          style={styles.webview}
-          injectedJavaScript={injectedJavaScript}
-          onMessage={() => {}}
-          mediaPlaybackRequiresUserAction={true}
-          allowsInlineMediaPlayback={true}
-          allowsFullscreenVideo={false}
-          javaScriptCanOpenWindowsAutomatically={false}
-        />
+        { searchParamAsString(url) &&
+          <WebView
+            ref={webViewRef}
+            source={{ uri: url }}
+            style={styles.webview}
+            injectedJavaScript={injectedJavaScript}
+            onMessage={() => {}}
+            mediaPlaybackRequiresUserAction={true}
+            allowsInlineMediaPlayback={true}
+            allowsFullscreenVideo={false}
+            javaScriptCanOpenWindowsAutomatically={false}
+          />
+        }
       </View>
       <View style={styles.footer}>
         <TouchableOpacity onPress={toggleFavorite} style={styles.footerButton}>
