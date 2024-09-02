@@ -24,6 +24,18 @@ type Props = {
     } | undefined;
 };
 
+// TODO refactor 
+const getHostname = (url: string) => {
+  if (url) {
+    const { hostname } = new URL(url);
+    if (hostname.startsWith('www.')) {
+      return hostname.substring(4);
+    }
+    return hostname;
+  }
+  return "";
+};
+
 const Header: React.FC<Props> = (props) => {
 
   const loginContext = useContext(LoginContext);
@@ -88,7 +100,7 @@ const Header: React.FC<Props> = (props) => {
           style={[styles.headerSubtitle, { color: subtitleColor }]}
           numberOfLines={1}
         >
-          {new URL(props.details.url).hostname}
+          {getHostname(props.details.url)}
         </Text>
       )
     } else {

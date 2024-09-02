@@ -15,6 +15,9 @@ interface Story {
 const getHostname = (story: Story) => {
   if (story.url) {
     const { hostname } = new URL(story.url);
+    if (hostname.startsWith('www.')) {
+      return hostname.substring(4);
+    }
     return hostname;
   }
   return "";
