@@ -4,6 +4,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { WebView } from 'react-native-webview';
 import { useThemeColor } from "@/utils/Colors";
 import { Feather } from '@expo/vector-icons';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import LoginModal from '@/components/LoginModal';
 import Header from '@/components/Header';
 import { LoginContext } from '@/components/LoginProvider';
@@ -27,6 +28,7 @@ const darkReaderScript = `
 export default function HackerNewsPageDetail() {
   const { url, story, title } = useLocalSearchParams();
   const loginContext = useContext(LoginContext);
+  // TODO load favorite based on login
   const [isFavorited, setIsFavorited] = useState(false);
 
   const webViewRef = useRef(null);
@@ -79,7 +81,10 @@ export default function HackerNewsPageDetail() {
       </View>
       <View style={styles.footer}>
         <TouchableOpacity onPress={toggleFavorite} style={styles.footerButton}>
-          <Feather name={isFavorited ? "star" : "star"} size={24} color={tintColor} />
+          {isFavorited ? 
+            <FontAwesome name="star" size={24} color={tintColor} /> :
+            <Feather name="star" size={24} color={tintColor} />
+          }
           <Text style={{ color: subtitleColor }}>Favorite</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={sharePost} style={styles.footerButton}>
