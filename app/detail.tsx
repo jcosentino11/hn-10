@@ -74,9 +74,14 @@ export default function HackerNewsPageDetail() {
   const injectedJavaScript = isDarkMode ? darkReaderScript : '';
 
   const renderContent = () => {
+    const emptyContent = (
+      <View style={[styles.webViewContainer, { borderColor: subtitleColor}]}>
+      </View>
+    );
+
     const urlStr = searchParamAsString(url);
     if (!urlStr) {
-      return (null);
+      return emptyContent;
     }
 
     if (settingsContext.selectedBrowser == 'In App') {
@@ -103,7 +108,7 @@ export default function HackerNewsPageDetail() {
         </View>
       );
     }
-    return (null);
+    return emptyContent;
   };
 
   return (
