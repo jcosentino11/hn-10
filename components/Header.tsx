@@ -10,6 +10,7 @@ import { useNavigation, Link } from "expo-router";
 import { useThemeColor } from "@/utils/Colors";
 import { Feather } from "@expo/vector-icons";
 import { LoginContext } from "./LoginProvider";
+import LoginModal from "./LoginModal";
 
 type Props = {
     details: {
@@ -82,29 +83,32 @@ const Header: React.FC<Props> = (props) => {
     );
 
   return (
-    <View
-      style={[
-        styles.header,
-        { backgroundColor: cardColor, borderBottomColor: borderColor },
-      ]}
-    >
-      {renderBackButton()}
-      {renderTitle()}
-      <TouchableOpacity
-        onPress={() => loginContext.showModal(true)}
-        style={styles.headerIcon}
+    <View>
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: cardColor, borderBottomColor: borderColor },
+        ]}
       >
-        <Feather
-          name={loginContext.isLoggedIn ? "user-check" : "user"}
-          size={24}
-          color={tintColor}
-        />
-      </TouchableOpacity>
-      <Link href="/settings" asChild={true}>
-        <TouchableOpacity style={styles.headerIcon}>
-          <Feather name="settings" size={24} color={tintColor} />
+        {renderBackButton()}
+        {renderTitle()}
+        <TouchableOpacity
+          onPress={() => loginContext.showModal(true)}
+          style={styles.headerIcon}
+        >
+          <Feather
+            name={loginContext.isLoggedIn ? "user-check" : "user"}
+            size={24}
+            color={tintColor}
+          />
         </TouchableOpacity>
-      </Link>
+        <Link href="/settings" asChild={true}>
+          <TouchableOpacity style={styles.headerIcon}>
+            <Feather name="settings" size={24} color={tintColor} />
+          </TouchableOpacity>
+        </Link>
+      </View>
+      <LoginModal />
     </View>
   );
 };
