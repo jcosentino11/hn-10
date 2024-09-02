@@ -86,7 +86,7 @@ export default function HackerNewsPageDetail() {
             <FontAwesome name="star" size={24} color={tintColor} /> :
             <Feather name="star" size={24} color={tintColor} />
           }
-          <Text style={{ color: subtitleColor }}>Favorite</Text>
+          <Text style={{ color: subtitleColor }}>{isFavorited ? "Remove" : "Favorite"}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={sharePost} style={styles.footerButton}>
           <Feather name="share-2" size={24} color={tintColor} />
