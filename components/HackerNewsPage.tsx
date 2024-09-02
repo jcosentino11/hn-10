@@ -12,8 +12,11 @@ interface Story {
 }
 
 const getHostname = (story: Story) => {
-  const { hostname } = new URL(story.url);
-  return hostname;
+  if (story.url) {
+    const { hostname } = new URL(story.url);
+    return hostname;
+  }
+  return "";
 };
 
 export interface SelectedStory {
@@ -31,7 +34,6 @@ interface HackerNewsPageProps {
 
 const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onDataFetched, onStorySelected, client }) => {
   const [stories, setStories] = useState<Story[]>([]);
-  const [itemHeight, setItemHeight] = useState<number | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
@@ -66,11 +68,6 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
       setRefreshing(false);
     }
   }, [fetchStories, numberOfStories, client, onDataFetched]);
-
-  const onLayout = useCallback((event: LayoutChangeEvent) => {
-    const { height } = event.nativeEvent.layout;
-    setItemHeight(height);
-  }, []);
 
   const renderItem = ({ item, index }: { item: Story, index: number }) => (
     <TouchableOpacity 
@@ -107,7 +104,6 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
       data={stories}
       renderItem={renderItem}
       keyExtractor={(item) => item.objectID}
-      onLayout={onLayout}
       onRefresh={onRefresh}
       refreshing={refreshing}
       ListEmptyComponent={initialLoadComplete ? renderLoadingFailedItem : null}

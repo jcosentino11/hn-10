@@ -16,6 +16,7 @@ export class DefaultHNClient {
 
   async fetchHackerNewsStories(numberOfStories: number): Promise<Story[]> {
     try {
+      // TODO filter out Ask HN, etc
       const response = await fetch(
         `https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=${numberOfStories}`,
         {timeout: this.responseTimeout}
