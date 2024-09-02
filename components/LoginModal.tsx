@@ -37,7 +37,8 @@ const LoginModal: React.FC = () => {
                 <Text style={[styles.modalButtonText, { color: tintColor }]}>Log Out</Text>
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity onPress={loginContext.login} style={styles.modalButton}>
+              // TODO fields!!!
+              <TouchableOpacity onPress={() => loginContext.login('TODO', 'TODO')} style={styles.modalButton}>
                 <Text style={[styles.modalButtonText, { color: tintColor }]}>Log In</Text>
               </TouchableOpacity>
             )}

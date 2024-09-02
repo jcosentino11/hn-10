@@ -1,10 +1,10 @@
 import { createContext, useState, useEffect, useCallback } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetch } from "@/utils/Fetch";
 
 class LoginState {
-  isLoggedIn: boolean = false;
   showLoginModal: boolean = false;
-  login!: () => Promise<void>;
+  isLoggedIn: boolean = false;
+  login!: (username: string, password: string) => Promise<void>;
   logout!: () => Promise<void>;
   showModal!: (show: boolean) => void;
 }
@@ -16,45 +16,95 @@ interface Props {
 }
 
 export const LoginProvider: React.FC<Props> = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-
-  const isLoggedInStorageKey = 'isLoggedIn';
-  // since there aren't types on AsyncStorage
-  const isLoggedInVal = {
-    true: "true",
-    false: "false"
-  };
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
     loadIsLoggedIn();
   }, []);
 
-  const login = useCallback(async () => {
-    await AsyncStorage.setItem(isLoggedInStorageKey, isLoggedInVal.true);
+  const loadIsLoggedIn = async () => {
+    if (await alreadyLoggedIn()) {
+      setIsLoggedIn(true);
+    } 
+  };
+
+  const alreadyLoggedIn = async () => {
+    const content = await fetchHNMainPage();
+    return content.match(/logout\?auth/);
+  };
+
+  const login = useCallback(async (username: string, password: string) => {
+    if (await alreadyLoggedIn()) {
+      return;
+    }
+
+    const loginResult = await fetchHNPage('login', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      body: `goto=news&acct=${encodeURIComponent(username)}&pw=${encodeURIComponent(password)}`,
+    });
+
+    if (!loginResult.match(/logout\?auth/)) {
+      return;
+    }
+
     setIsLoggedIn(true);
     setShowLoginModal(false);
   }, []);
 
   const logout = useCallback(async () => {
-    await AsyncStorage.setItem(isLoggedInStorageKey, isLoggedInVal.false);
-    setIsLoggedIn(false);
+    if (isLoggedIn) {
+      const token = await fetchAuthToken();
+      if (token == null) {
+        setIsLoggedIn(false);
+      } else {
+        await fetchHNPage(`logout?auth=${encodeURIComponent(token)}`, {});
+        if (!await alreadyLoggedIn()) {
+          setIsLoggedIn(false);
+        }
+      }
+    }
     setShowLoginModal(false);
   }, []);
+
+  const fetchHNPage = async (path: string, { ...opts }: RequestInit) => {
+    let url = 'https://news.ycombinator.com';
+    if (path) {
+      url += `/${path}`;
+    }
+    return await fetch(url, {
+      ...opts,
+      mode: 'cors',
+      credentials: 'include',
+      cache: 'no-cache',
+      referrerPolicy: 'origin'
+    }).then(res => res.text());
+  };
+
+  const fetchHNMainPage = async () => await fetchHNPage('', {});
+  
+  const fetchAuthToken = async () => {
+    const data = await fetchHNPage(`item?id=1000`, {});
+    return (String(data || '').match(/(["'])(?:(?=(\\?))\2.)*?\1/g) || [])
+      .filter(n => n.match(/auth=/))
+      .map((item) => {
+        const auth = item.match(/["'].*?auth=([a-f0-9]*)/);
+        return auth && auth[1] ? auth[1] : null
+      })[0];
+  };
 
   const showModal = useCallback((show: boolean) => {
     setShowLoginModal(show);
   }, []);
 
-  const loadIsLoggedIn = async () => {
-    setIsLoggedIn(await AsyncStorage.getItem(isLoggedInStorageKey) === isLoggedInVal.true);
-  };
-
   return (
     <LoginContext.Provider
       value={{
-        isLoggedIn,
         showLoginModal,
+        isLoggedIn,
         login,
         logout,
         showModal,
