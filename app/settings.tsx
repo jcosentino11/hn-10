@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert, SafeAreaView, StatusBar, Appearance } from 'react-native';
 import { useColorScheme } from 'react-native';
 import { useThemeColor } from "@/utils/Colors";
 import { Feather } from '@expo/vector-icons';
+import Header from '@/components/Header';
 
 export default function SettingsPage() {
   const colorScheme = useColorScheme();
@@ -15,8 +16,9 @@ export default function SettingsPage() {
   const tintColor = useThemeColor(colorScheme, 'tint');
 
   const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    // Implement logic to change app-wide theme
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    Appearance.setColorScheme(newMode ? 'dark' : 'light');
   };
 
   const changeBrowser = (browser) => {
@@ -39,35 +41,42 @@ export default function SettingsPage() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <Text style={[styles.title, { color: textColor }]}>Settings</Text>
-      
-      <View style={[styles.section, { backgroundColor: cardColor }]}>
-        <Text style={[styles.sectionTitle, { color: textColor }]}>Appearance</Text>
-        <View style={styles.setting}>
-          <Text style={[styles.settingText, { color: textColor }]}>Dark Mode</Text>
-          <Switch value={isDarkMode} onValueChange={toggleDarkMode} />
+    <SafeAreaView style={[styles.container, { backgroundColor: backgroundColor  }]}>
+      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
+      <Header 
+        title='Settings' 
+        showLoginIcon={false} 
+        showOptionsIcon={false} 
+        showBackIcon={true} 
+        details={undefined} />
+      <View style={[styles.container, { backgroundColor }]}>
+        <View style={[styles.section, { backgroundColor: cardColor }]}>
+          <Text style={[styles.sectionTitle, { color: textColor }]}>Appearance</Text>
+          <View style={styles.setting}>
+            <Text style={[styles.settingText, { color: textColor }]}>Dark Mode</Text>
+            <Switch value={isDarkMode} onValueChange={toggleDarkMode} />
+          </View>
         </View>
-      </View>
 
-      <View style={[styles.section, { backgroundColor: cardColor }]}>
-        <Text style={[styles.sectionTitle, { color: textColor }]}>Browser</Text>
-        {['in-app', 'google', 'safari'].map((browser) => (
-          <TouchableOpacity 
-            key={browser} 
-            style={styles.setting} 
-            onPress={() => changeBrowser(browser)}
-          >
-            <Text style={[styles.settingText, { color: textColor }]}>{browser}</Text>
-            {selectedBrowser === browser && <Feather name="check" size={24} color={tintColor} />}
-          </TouchableOpacity>
-        ))}
-      </View>
+        <View style={[styles.section, { backgroundColor: cardColor }]}>
+          <Text style={[styles.sectionTitle, { color: textColor }]}>Browser</Text>
+          {['in-app', 'google', 'safari'].map((browser) => (
+            <TouchableOpacity 
+              key={browser} 
+              style={styles.setting} 
+              onPress={() => changeBrowser(browser)}
+            >
+              <Text style={[styles.settingText, { color: textColor }]}>{browser}</Text>
+              {selectedBrowser === browser && <Feather name="check" size={24} color={tintColor} />}
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <TouchableOpacity style={[styles.tipButton, { backgroundColor: tintColor }]} onPress={handleTip}>
-        <Text style={styles.tipButtonText}>Buy Me a Coffee</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={[styles.tipButton, { backgroundColor: tintColor }]} onPress={handleTip}>
+          <Text style={styles.tipButtonText}>Buy Me a Coffee</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 

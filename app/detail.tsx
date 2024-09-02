@@ -75,11 +75,16 @@ export default function HackerNewsPageDetail() {
     <SafeAreaView style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
       <Header 
-        isMainPage={false} 
+        title={undefined}
+        showLoginIcon={false} 
+        showOptionsIcon={false} 
+        showBackIcon={true} 
         details={{
           url: searchParamAsString(url), 
           story: searchParamAsString(story), 
-          title: searchParamAsString(title)}} />
+          title: searchParamAsString(title),
+        }}
+      />
       <View style={styles.webViewContainer}>
         { searchParamAsString(url) &&
           <WebView
