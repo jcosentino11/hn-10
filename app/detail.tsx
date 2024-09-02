@@ -63,8 +63,9 @@ export default function HackerNewsPageDetail() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
+      {/* TODO make each header part optional so we don't need to rely on filtering out story types */}
       {typeof url == 'string' && typeof story == 'string' && typeof title == 'string' && 
-            <Header details={{url: new URL(url), story: story, title: title}} />
+        <Header details={{url: new URL(url), story: story, title: title}} />
       }
       <View style={styles.webViewContainer}>
         <WebView
