@@ -72,9 +72,7 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
     setItemHeight(height);
   }, []);
 
-  const calculatedItemHeight = itemHeight ? Math.max(50, itemHeight / numberOfStories) : 50;
-
-const renderItem = ({ item, index }: { item: Story, index: number }) => (
+  const renderItem = ({ item, index }: { item: Story, index: number }) => (
     <TouchableOpacity 
       key={item.objectID} 
       onPress={() => onStorySelected({story:(index + 1), title:item.title, url:item.url})}
