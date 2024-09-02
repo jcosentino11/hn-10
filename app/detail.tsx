@@ -1,15 +1,9 @@
-
-import React, { useContext, useRef, useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme, Share } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme, Dimensions } from 'react-native';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { WebView } from 'react-native-webview';
 import { useThemeColor } from "@/utils/Colors";
 import { Feather } from '@expo/vector-icons';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import LoginModal from '@/components/LoginModal';
-import Header from '@/components/Header';
-import { LoginContext } from '@/components/LoginProvider';
-
 
 const darkReaderScript = `
   (function() {
@@ -29,83 +23,43 @@ const darkReaderScript = `
 
 export default function HackerNewsPageDetail() {
   const { url, story, title } = useLocalSearchParams();
-  const loginContext = useContext(LoginContext);
-  // TODO load favorite based on login
-  const [isFavorited, setIsFavorited] = useState(false);
-
-  const webViewRef = useRef(null);
-
+  const navigation = useNavigation();
   const colorScheme = useColorScheme();
+  const webViewRef = useRef(null);
   const isDarkMode = colorScheme === 'dark';
+
   const backgroundColor = useThemeColor(colorScheme, 'background');
+  const textColor = useThemeColor(colorScheme, 'text');
+  const borderColor = useThemeColor(colorScheme, 'border');
   const tintColor = useThemeColor(colorScheme, 'tint');
+  const cardColor = useThemeColor(colorScheme, 'card');
   const subtitleColor = useThemeColor(colorScheme, 'subtitle');
 
-  const toggleFavorite = () => {
-    if (loginContext.isLoggedIn) {
-      setIsFavorited(!isFavorited);
-      // TODO
-    } else {
-      loginContext.showModal(true);
-    }
-  };
 
-  const sharePost = async () => {
-    try {
-      await Share.share({
-        message: `Check out this Hacker News post: ${title} - ${url}`,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const checkLoginStatus = async () => {
-    const status = await AsyncStorage.getItem('isLoggedIn');
-    setIsLoggedIn(status === 'true');
-  };
-
-  const handleLogin = async () => {
-    // Implement login logic here
-    await AsyncStorage.setItem('isLoggedIn', 'true');
-    setIsLoggedIn(true);
-    setShowLoginModal(false);
-  };
-
-  const handleLogout = async () => {
-    await AsyncStorage.setItem('isLoggedIn', 'false');
-    setIsLoggedIn(false);
-    setShowLoginModal(false);
-  };
-
-  const toggleFavorite = () => {
-    if (isLoggedIn) {
-      setIsFavorited(!isFavorited);
-      // Implement favoriting logic here
-    } else {
-      setShowLoginModal(true);
-    }
-  };
-
-  const sharePost = async () => {
-    try {
-      await Share.share({
-        message: `Check out this Hacker News post: ${title} - ${url}`,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, [navigation]);
 
   const injectedJavaScript = isDarkMode ? darkReaderScript : '';
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
-      {/* TODO make each header part optional so we don't need to rely on filtering out story types */}
-      {typeof url == 'string' && typeof story == 'string' && typeof title == 'string' && 
-        <Header details={{url: new URL(url), story: story, title: title}} />
-      }
+      <View style={[styles.header, { backgroundColor: cardColor, borderBottomColor: borderColor }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Feather name="arrow-left" size={24} color={tintColor} />
+        </TouchableOpacity>
+        <View style={styles.headerTextContainer}>
+          <Text style={[styles.headerNumber, { color: tintColor }]}>{story}.</Text>
+          <View>
+            <Text style={[styles.headerTitle, { color: textColor }]} numberOfLines={1}>{title}</Text>
+          
+            <Text style={[styles.headerSubtitle, { color: subtitleColor }]} numberOfLines={1}>{typeof url == 'string' ? new URL(url).hostname : ''}</Text>
+          </View>
+        </View>
+      </View>
       <View style={styles.webViewContainer}>
         <WebView
           ref={webViewRef}
@@ -119,19 +73,6 @@ export default function HackerNewsPageDetail() {
           javaScriptCanOpenWindowsAutomatically={false}
         />
       </View>
-      <View style={styles.footer}>
-        <TouchableOpacity onPress={toggleFavorite} style={styles.footerButton}>
-          {isFavorited ? 
-            <FontAwesome name="star" size={24} color={tintColor} /> :
-            <Feather name="star" size={24} color={tintColor} />
-          }
-          <Text style={{ color: subtitleColor }}>{isFavorited ? "Remove" : "Favorite"}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={sharePost} style={styles.footerButton}>
-          <Feather name="share-2" size={24} color={tintColor} />
-          <Text style={{ color: subtitleColor }}>Share</Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }
@@ -139,6 +80,40 @@ export default function HackerNewsPageDetail() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  backButton: {
+    padding: 8,
+  },
+  headerTextContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 8,
+    marginRight: 30,
+  },
+  headerNumber: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginRight: 8,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    flex: 1,
+  },
+  headerSubtitle: {
+    fontSize: 12,
   },
   webViewContainer: {
     flex: 1,
@@ -153,14 +128,5 @@ const styles = StyleSheet.create({
   },
   webview: {
     flex: 1,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 10,
-    borderTopWidth: 1,
-  },
-  footerButton: {
-    alignItems: 'center',
   },
 });
