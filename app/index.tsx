@@ -5,6 +5,7 @@ import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
 import { DefaultHNClient } from '@/clients/HNClient';
 import { useRouter } from 'expo-router';
+import Header from '@/components/Header';
 
 export default function Index() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function Index() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={scheme === 'dark' ? "light-content" : "dark-content"} />
+      <Header details={undefined} />
       <View style={styles.content}>
         <HackerNewsPage numberOfStories={10} onDataFetched={() => {}} onStorySelected={handleStorySelected} client={client} />
       </View>

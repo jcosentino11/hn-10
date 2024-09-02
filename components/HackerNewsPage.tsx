@@ -12,8 +12,11 @@ interface Story {
 }
 
 const getHostname = (story: Story) => {
-  const { hostname } = new URL(story.url);
-  return hostname;
+  if (story.url) {
+    const { hostname } = new URL(story.url);
+    return hostname;
+  }
+  return "";
 };
 
 export interface SelectedStory {
@@ -31,7 +34,6 @@ interface HackerNewsPageProps {
 
 const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onDataFetched, onStorySelected, client }) => {
   const [stories, setStories] = useState<Story[]>([]);
-  const [itemHeight, setItemHeight] = useState<number | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
@@ -67,14 +69,7 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
     }
   }, [fetchStories, numberOfStories, client, onDataFetched]);
 
-  const onLayout = useCallback((event: LayoutChangeEvent) => {
-    const { height } = event.nativeEvent.layout;
-    setItemHeight(height);
-  }, []);
-
-  const calculatedItemHeight = itemHeight ? Math.max(50, itemHeight / numberOfStories) : 50;
-
-const renderItem = ({ item, index }: { item: Story, index: number }) => (
+  const renderItem = ({ item, index }: { item: Story, index: number }) => (
     <TouchableOpacity 
       key={item.objectID} 
       onPress={() => onStorySelected({story:(index + 1), title:item.title, url:item.url})}
@@ -109,7 +104,6 @@ const renderItem = ({ item, index }: { item: Story, index: number }) => (
       data={stories}
       renderItem={renderItem}
       keyExtractor={(item) => item.objectID}
-      onLayout={onLayout}
       onRefresh={onRefresh}
       refreshing={refreshing}
       ListEmptyComponent={initialLoadComplete ? renderLoadingFailedItem : null}
