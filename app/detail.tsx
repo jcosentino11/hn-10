@@ -75,7 +75,7 @@ export default function HackerNewsPageDetail() {
 
   const renderContent = () => {
     const emptyContent = (
-      <View style={[styles.webViewContainer, { borderColor: subtitleColor}]}>
+      <View style={[styles.contentContainer, { borderColor: subtitleColor}]}>
       </View>
     );
 
@@ -86,7 +86,7 @@ export default function HackerNewsPageDetail() {
 
     if (settingsContext.selectedBrowser == 'In App') {
       return (
-        <View style={[styles.webViewContainer, {borderColor: subtitleColor}]}>
+        <View style={[styles.contentContainer, {borderColor: subtitleColor}]}>
           <WebView
             ref={webViewRef}
             source={{ uri: urlStr }}
@@ -103,7 +103,7 @@ export default function HackerNewsPageDetail() {
     }
     if (settingsContext.selectedBrowser == 'Default') {
       return (
-        <View style={[styles.webViewContainer, {paddingTop: '60%', borderColor: subtitleColor}]}>
+        <View style={[styles.contentContainer, {paddingTop: '60%', borderColor: subtitleColor}]}>
           <Button title="Open in Default Browser" onPress={() => Linking.openURL(urlStr)} />
         </View>
       );
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  webViewContainer: {
+  contentContainer: {
     flex: 1,
     margin: 16,
     borderRadius: 8,
