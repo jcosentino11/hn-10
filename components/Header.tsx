@@ -13,10 +13,11 @@ import { LoginContext } from "./LoginProvider";
 import LoginModal from "./LoginModal";
 
 type Props = {
+    isMainPage: boolean
     details: {
-        url: URL;
-        story: string;
-        title: string;
+        url: string | undefined;
+        story: string | undefined;
+        title: string | undefined;
     } | undefined;
 };
 
@@ -38,10 +39,8 @@ const Header: React.FC<Props> = (props) => {
     });
   }, [navigation]);
 
-  const isMainPage = props.details == undefined;
-
   const renderBackButton = () =>
-    isMainPage ? null : (
+    props.isMainPage ? null : (
         <TouchableOpacity
         onPress={() => navigation.goBack()}
         style={styles.backButton}
@@ -50,8 +49,50 @@ const Header: React.FC<Props> = (props) => {
       </TouchableOpacity>
     );
 
-  const renderTitle = () =>
-    isMainPage ? (
+  const renderStoryNumber = () => {
+    if (props.details && props.details.story && props.details.story.trim()) {
+      return (
+        <Text style={[styles.headerNumber, { color: tintColor }]}>
+          {props.details.story}.
+        </Text>
+      )
+    } else {
+      return (null);
+    }
+  }
+
+  const renderTitle = () => {
+    if (props.details && props.details.title && props.details.title.trim()) {
+      return (
+        <Text
+            style={[styles.headerTitle, { color: textColor }]}
+            numberOfLines={1}
+          >
+            {props.details.title}
+          </Text>
+      )
+    } else {
+      return (null);
+    }
+  }
+
+  const renderSubtitle = () => {
+    if (props.details && props.details.url && props.details.url.trim()) {
+      return (
+        <Text
+          style={[styles.headerSubtitle, { color: subtitleColor }]}
+          numberOfLines={1}
+        >
+          {new URL(props.details.url).hostname}
+        </Text>
+      )
+    } else {
+      return (null);
+    }
+  }
+
+  const renderHeaderText = () =>
+    props.isMainPage ? (
         <View style={styles.headerTextContainer}>
             <Text
                 style={[styles.headerTitle, { color: textColor }]}
@@ -62,22 +103,10 @@ const Header: React.FC<Props> = (props) => {
         </View>    
     ) : (
       <View style={styles.headerTextContainer}>
-        <Text style={[styles.headerNumber, { color: tintColor }]}>
-          {props.details && props.details.story}.
-        </Text>
+        {renderStoryNumber()}
         <View>
-          <Text
-            style={[styles.headerTitle, { color: textColor }]}
-            numberOfLines={1}
-          >
-            {props.details && props.details.title}
-          </Text>
-          <Text
-            style={[styles.headerSubtitle, { color: subtitleColor }]}
-            numberOfLines={1}
-          >
-            {props.details && props.details.url.hostname}
-          </Text>
+          {renderTitle()}
+          {renderSubtitle()}
         </View>
       </View>
     );
@@ -91,7 +120,7 @@ const Header: React.FC<Props> = (props) => {
         ]}
       >
         {renderBackButton()}
-        {renderTitle()}
+        {renderHeaderText()}
         <TouchableOpacity
           onPress={() => loginContext.showModal(true)}
           style={styles.headerIcon}
