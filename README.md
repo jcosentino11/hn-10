@@ -1,4 +1,4 @@
-# HN 10
+# HN-10
 
 Just the top 10 [HN](https://news.ycombinator.com/) posts.
 
