@@ -27,8 +27,8 @@ export default function SettingsPage() {
 
   const handleTip = () => {
     Alert.alert(
-      "Support the Developer",
-      "Thank you for considering a tip! This will open the in-app purchase flow.",
+      "Thank you!",
+      "Proceeds will go towards improving the app and fueling my caffeine addiction",
       [
         { text: "Cancel", style: "cancel" },
         { text: "Proceed", onPress: () => {
@@ -72,7 +72,7 @@ export default function SettingsPage() {
         </View>
 
         <TouchableOpacity style={[styles.tipButton, { backgroundColor: tintColor }]} onPress={handleTip}>
-          <Text style={styles.tipButtonText}>Buy Me a Coffee</Text>
+          <Text style={styles.tipButtonText}>Tip Jar</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
