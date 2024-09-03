@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme, Share, Linking, Button } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { WebView } from 'react-native-webview';
@@ -26,10 +26,13 @@ const darkReaderScript = `
 `;
 
 export default function HackerNewsPageDetail() {
-  const { url, story, title } = useLocalSearchParams();
+  const { url, story, title, id } = useLocalSearchParams();
   const loginContext = useContext(LoginContext);
-  // TODO load favorite based on login
   const [isFavorited, setIsFavorited] = useState(false);
+
+  useEffect(() => {
+    loadIsFavorited();
+  }, []);
 
   const settingsContext = useContext(SettingsContext);
   const webViewRef = useRef(null);
@@ -52,14 +55,32 @@ export default function HackerNewsPageDetail() {
   const tintColor = useThemeColor(colorScheme, 'tint');
   const subtitleColor = useThemeColor(colorScheme, 'subtitle');
 
-  const toggleFavorite = () => {
+  const toggleFavorite = useCallback(async () => {
+    const postId = searchParamAsString(id);
+    if (!postId) {
+      return;
+    }
     if (loginContext.isLoggedIn) {
-      setIsFavorited(!isFavorited);
-      // TODO
+      if (isFavorited) {
+        if (await loginContext.unfavorite(postId)) {
+          setIsFavorited(false);
+        }
+      } else {
+        if (await loginContext.favorite(postId)) {
+          setIsFavorited(true);
+        }
+      }
     } else {
       loginContext.showModal(true);
     }
-  };
+  }, [isFavorited]);
+  
+  const loadIsFavorited = useCallback(async () => {
+    const postId = searchParamAsString(id);
+    if (postId) {
+      setIsFavorited(await loginContext.checkFavorite(postId));
+    }
+  }, []);
 
   const sharePost = async () => {
     try {
