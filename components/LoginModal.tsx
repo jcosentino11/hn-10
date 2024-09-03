@@ -6,8 +6,10 @@ import {
   TouchableOpacity,
   useColorScheme,
   Modal,
-  TextInput
+  TextInput,
+  Linking
 } from "react-native";
+import Feather from '@expo/vector-icons/Feather';
 import { useThemeColor } from "@/utils/Colors";
 import { LoginContext } from "./HackerNewsProvider";
 
@@ -40,9 +42,17 @@ const LoginModal: React.FC = () => {
             {loginContext.isLoggedIn ? 'Account' : 'Login'}
           </Text>
           {loginContext.isLoggedIn ? (
+            <View>
+            <TouchableOpacity onPress={() => Linking.openURL(`https://news.ycombinator.com/favorites?id=${loginContext.username}`)} style={styles.modalButton}>
+              <View style={styles.buttonContentRow}>
+                <Text style={[styles.modalButtonText, { color: tintColor }]}>View Favorites</Text>
+                <Feather name="external-link" size={18} color={tintColor} style={styles.externalLinkIcon} />
+              </View>
+            </TouchableOpacity>
             <TouchableOpacity onPress={loginContext.logout} style={styles.modalButton}>
               <Text style={[styles.modalButtonText, { color: tintColor }]}>Log Out</Text>
             </TouchableOpacity>
+          </View>
           ) : (
             <>
               {loginContext.showLoginError && (
@@ -118,6 +128,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 5,
     backgroundColor: 'rgba(255, 0, 0, 0.1)',
+  },
+  buttonContentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  externalLinkIcon: {
+    marginLeft: 8,
   },
 });
 

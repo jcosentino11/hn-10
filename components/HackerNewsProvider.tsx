@@ -6,6 +6,7 @@ class HackerNewsState {
   isLoggedIn: boolean = false;
   showLoginError: boolean = false;
   isFavoriting: boolean = false;
+  username: string = '';
   login!: (username: string, password: string) => Promise<void>;
   logout!: () => Promise<void>;
   checkFavorite!: (id: string) => Promise<boolean>;
@@ -25,6 +26,7 @@ export const HackerNewsProvider: React.FC<Props> = ({ children }) => {
   const [showLoginError, setShowLoginError] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isFavoriting, setIsFavoriting] = useState(false);
+  const [username, setUsername] = useState('');
 
   useEffect(() => {
     loadIsLoggedIn();
@@ -33,6 +35,12 @@ export const HackerNewsProvider: React.FC<Props> = ({ children }) => {
   useEffect(() => {
     setShowLoginError(false);
   }, [showLoginModal])
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setUsername('');
+    }
+  }, [isLoggedIn])
 
   const loadIsLoggedIn = useCallback(async () => {
     if (await alreadyLoggedIn()) {
@@ -64,6 +72,7 @@ export const HackerNewsProvider: React.FC<Props> = ({ children }) => {
       }
   
       setIsLoggedIn(true);
+      setUsername(username);
       setShowLoginModal(false);
     } catch {
       setShowLoginError(true);
@@ -177,6 +186,7 @@ export const HackerNewsProvider: React.FC<Props> = ({ children }) => {
         isLoggedIn,
         showLoginError,
         isFavoriting,
+        username,
         checkFavorite,
         favorite,
         unfavorite,
