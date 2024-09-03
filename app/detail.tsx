@@ -64,7 +64,7 @@ export default function HackerNewsPageDetail() {
   const sharePost = async () => {
     try {
       await Share.share({
-        message: `Check out this Hacker News post: ${title} - ${url}`,
+        message: `${title} - ${url}`,
       });
     } catch (error) {
       console.error(error);
