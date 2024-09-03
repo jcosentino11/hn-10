@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme, Share, Linking, Button } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { WebView } from 'react-native-webview';
 import { useThemeColor } from "@/utils/Colors";
 import { Feather } from '@expo/vector-icons';
@@ -33,6 +33,14 @@ export default function HackerNewsPageDetail() {
   useEffect(() => {
     loadIsFavorited();
   }, []);
+
+  useFocusEffect(useCallback(() => {
+    if (loginContext.isLoggedIn) {
+      loadIsFavorited();
+    } else {
+      setIsFavorited(false);
+    }
+  }, [loginContext.isLoggedIn]));
 
   const settingsContext = useContext(SettingsContext);
   const webViewRef = useRef(null);
