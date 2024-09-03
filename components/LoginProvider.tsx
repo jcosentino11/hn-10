@@ -5,6 +5,7 @@ class LoginState {
   showLoginModal: boolean = false;
   isLoggedIn: boolean = false;
   showLoginError: boolean = false;
+  isFavoriting: boolean = false;
   login!: (username: string, password: string) => Promise<void>;
   logout!: () => Promise<void>;
   checkFavorite!: (id: string) => Promise<boolean>;
@@ -22,7 +23,8 @@ interface Props {
 export const LoginProvider: React.FC<Props> = ({ children }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showLoginError, setShowLoginError] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isFavoriting, setIsFavoriting] = useState(false);
 
   useEffect(() => {
     loadIsLoggedIn();
@@ -97,6 +99,7 @@ export const LoginProvider: React.FC<Props> = ({ children }) => {
   }, []);
 
   const favorite = useCallback(async (id: string) => {
+    setIsFavoriting(true);
     try {
       const tokens = await fetchAuthTokens(id);
       const { token = null } = tokens.find(item => item.action === 'fave' && item.id === id) || {};
@@ -106,11 +109,14 @@ export const LoginProvider: React.FC<Props> = ({ children }) => {
       }
     } catch {
       console.log("favoriting failed");
+    } finally {
+      setIsFavoriting(false);
     }
     return false;
   }, []);
 
   const unfavorite = useCallback(async (id: string) => {
+    setIsFavoriting(true);
     try {
       const tokens = await fetchAuthTokens(id);
       const { token = null } = tokens.find(item => item.action === 'fave' && item.id === id) || {};
@@ -120,6 +126,8 @@ export const LoginProvider: React.FC<Props> = ({ children }) => {
       }
     } catch {
       console.log("unfavoriting failed");
+    } finally {
+      setIsFavoriting(false);
     }
     return false;
   }, []);
@@ -168,6 +176,7 @@ export const LoginProvider: React.FC<Props> = ({ children }) => {
         showLoginModal,
         isLoggedIn,
         showLoginError,
+        isFavoriting,
         checkFavorite,
         favorite,
         unfavorite,

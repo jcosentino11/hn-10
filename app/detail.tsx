@@ -56,24 +56,41 @@ export default function HackerNewsPageDetail() {
   const subtitleColor = useThemeColor(colorScheme, 'subtitle');
 
   const toggleFavorite = useCallback(async () => {
+    if (loginContext.isFavoriting) {
+      return;
+    }
     const postId = searchParamAsString(id);
     if (!postId) {
       return;
     }
     if (loginContext.isLoggedIn) {
       if (isFavorited) {
-        if (await loginContext.unfavorite(postId)) {
-          setIsFavorited(false);
-        }
+        setIsFavorited(false);
+        loginContext.unfavorite(postId)
+          .then(res => {
+            if (res) {
+              setIsFavorited(false);
+            }
+          })
+          .catch(err => {
+            setIsFavorited(true);
+          });
       } else {
-        if (await loginContext.favorite(postId)) {
-          setIsFavorited(true);
-        }
+        setIsFavorited(true);
+        loginContext.favorite(postId)
+          .then(res => {
+            if (res) {
+              setIsFavorited(true);
+            }
+          })
+          .catch(err => {
+            setIsFavorited(false);
+          });
       }
     } else {
       loginContext.showModal(true);
     }
-  }, [isFavorited]);
+  }, [isFavorited, loginContext.isFavoriting]);
   
   const loadIsFavorited = useCallback(async () => {
     const postId = searchParamAsString(id);
