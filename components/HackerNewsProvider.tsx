@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, useCallback } from "react";
 import { fetch } from "@/utils/Fetch";
 
-class LoginState {
+class HackerNewsState {
   showLoginModal: boolean = false;
   isLoggedIn: boolean = false;
   showLoginError: boolean = false;
@@ -14,13 +14,13 @@ class LoginState {
   showModal!: (show: boolean) => void;
 }
 
-export const LoginContext = createContext(new LoginState());
+export const LoginContext = createContext(new HackerNewsState());
 
 interface Props {
   children: React.ReactNode;
 }
 
-export const LoginProvider: React.FC<Props> = ({ children }) => {
+export const HackerNewsProvider: React.FC<Props> = ({ children }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showLoginError, setShowLoginError] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);

@@ -10,7 +10,7 @@ import {
 import { useNavigation, Link } from "expo-router";
 import { useThemeColor } from "@/utils/Colors";
 import { Feather } from "@expo/vector-icons";
-import { LoginContext } from "./LoginProvider";
+import { LoginContext } from "./HackerNewsProvider";
 import LoginModal from "./LoginModal";
 
 type Props = {

@@ -6,7 +6,7 @@ import { useThemeColor } from "@/utils/Colors";
 import { Feather } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Header from '@/components/Header';
-import { LoginContext } from '@/components/LoginProvider';
+import { LoginContext } from '@/components/HackerNewsProvider';
 import { SettingsContext } from '@/components/SettingsProvider';
 
 const darkReaderScript = `

@@ -9,7 +9,7 @@ import {
   TextInput
 } from "react-native";
 import { useThemeColor } from "@/utils/Colors";
-import { LoginContext } from "./LoginProvider";
+import { LoginContext } from "./HackerNewsProvider";
 
 const LoginModal: React.FC = () => {
   const loginContext = useContext(LoginContext);
