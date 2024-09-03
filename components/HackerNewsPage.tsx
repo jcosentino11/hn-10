@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { FlatList, View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
-import { HNClient } from '@/clients/HNClient';
+import { AlgoliaClient } from '@/clients/AlgoliaClient';
 
 
 interface Story {
@@ -34,7 +34,7 @@ interface HackerNewsPageProps {
   numberOfStories: number;
   onDataFetched: () => void;
   onStorySelected: (story: SelectedStory) => void;
-  client: HNClient;
+  client: AlgoliaClient;
 }
 
 const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onDataFetched, onStorySelected, client }) => {

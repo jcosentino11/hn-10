@@ -3,7 +3,7 @@ import HackerNewsPage, { SelectedStory } from "@/components/HackerNewsPage";
 import { View, StyleSheet, SafeAreaView, StatusBar } from "react-native";
 import { useThemeColor } from "@/utils/Colors";
 import { useColorScheme } from "react-native";
-import { DefaultHNClient } from '@/clients/HNClient';
+import { DefaultAlgoliaClient } from '@/clients/AlgoliaClient';
 import { useRouter } from 'expo-router';
 import Header from '@/components/Header';
 
@@ -14,7 +14,7 @@ export default function Index() {
   }, []);
 
   const scheme = useColorScheme();
-  const client = useMemo(() => new DefaultHNClient(), []);
+  const client = useMemo(() => new DefaultAlgoliaClient(), []);
 
   const theme = {
     background: useThemeColor(scheme, 'background'),

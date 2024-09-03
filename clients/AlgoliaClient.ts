@@ -7,11 +7,11 @@ export interface Story {
   author: string;
 }
 
-export interface HNClient {
+export interface AlgoliaClient {
   fetchHackerNewsStories(numberOfStories: number): Promise<Story[]>;
 }
 
-export class DefaultHNClient {
+export class DefaultAlgoliaClient {
   constructor(private responseTimeout: number = 5000) {}
 
   async fetchHackerNewsStories(numberOfStories: number): Promise<Story[]> {
