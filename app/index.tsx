@@ -10,7 +10,7 @@ import Header from '@/components/Header';
 export default function Index() {
   const router = useRouter();
   const handleStorySelected = useCallback((story: SelectedStory) => {
-    router.push(`/detail?url=${encodeURIComponent(story.url)}&story=${story.story}&title=${story.title}&id=${story.id}`);
+    router.push(`/detail?url=${encodeURIComponent(story.url)}&story=${encodeURIComponent(story.story)}&title=${encodeURIComponent(story.title)}&id=${encodeURIComponent(story.id)}`);
   }, []);
 
   const scheme = useColorScheme();
