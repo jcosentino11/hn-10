@@ -18,11 +18,11 @@ export class DefaultHNClient {
     try {
       // TODO filter out Ask HN, etc
       const response = await fetch(
-        `https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=${numberOfStories}`,
+        `https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=${numberOfStories * 2}`,
         {timeout: this.responseTimeout}
       );
       const data = await response.json();
-      return data.hits;
+      return data.hits.filter((hit: any) => !hit._tags.includes('ask_hn')).slice(0, numberOfStories);
     } catch (error) {
       console.error(error);
       return [];
