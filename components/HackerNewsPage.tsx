@@ -26,7 +26,8 @@ const getHostname = (story: Story) => {
 export interface SelectedStory {
   story: number;
   url: string;
-  title: string
+  title: string;
+  id: string;
 }
 
 interface HackerNewsPageProps {
@@ -75,7 +76,7 @@ const HackerNewsPage: React.FC<HackerNewsPageProps> = ({ numberOfStories, onData
   const renderItem = ({ item, index }: { item: Story, index: number }) => (
     <TouchableOpacity 
       key={item.objectID} 
-      onPress={() => onStorySelected({story:(index + 1), title:item.title, url:item.url})}
+      onPress={() => onStorySelected({story:(index + 1), title:item.title, url:item.url, id: item.objectID})}
       style={[
         styles.storyContainer, 
         { 

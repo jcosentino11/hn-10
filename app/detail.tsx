@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, useColorScheme, Share, Linking, Button } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { WebView } from 'react-native-webview';
@@ -26,10 +26,13 @@ const darkReaderScript = `
 `;
 
 export default function HackerNewsPageDetail() {
-  const { url, story, title } = useLocalSearchParams();
+  const { url, story, title, id } = useLocalSearchParams();
   const loginContext = useContext(LoginContext);
-  // TODO load favorite based on login
   const [isFavorited, setIsFavorited] = useState(false);
+
+  useEffect(() => {
+    loadIsFavorited();
+  }, []);
 
   const settingsContext = useContext(SettingsContext);
   const webViewRef = useRef(null);
@@ -52,14 +55,49 @@ export default function HackerNewsPageDetail() {
   const tintColor = useThemeColor(colorScheme, 'tint');
   const subtitleColor = useThemeColor(colorScheme, 'subtitle');
 
-  const toggleFavorite = () => {
+  const toggleFavorite = useCallback(async () => {
+    if (loginContext.isFavoriting) {
+      return;
+    }
+    const postId = searchParamAsString(id);
+    if (!postId) {
+      return;
+    }
     if (loginContext.isLoggedIn) {
-      setIsFavorited(!isFavorited);
-      // TODO
+      if (isFavorited) {
+        setIsFavorited(false);
+        loginContext.unfavorite(postId)
+          .then(res => {
+            if (res) {
+              setIsFavorited(false);
+            }
+          })
+          .catch(err => {
+            setIsFavorited(true);
+          });
+      } else {
+        setIsFavorited(true);
+        loginContext.favorite(postId)
+          .then(res => {
+            if (res) {
+              setIsFavorited(true);
+            }
+          })
+          .catch(err => {
+            setIsFavorited(false);
+          });
+      }
     } else {
       loginContext.showModal(true);
     }
-  };
+  }, [isFavorited, loginContext.isFavoriting]);
+  
+  const loadIsFavorited = useCallback(async () => {
+    const postId = searchParamAsString(id);
+    if (postId) {
+      setIsFavorited(await loginContext.checkFavorite(postId));
+    }
+  }, []);
 
   const sharePost = async () => {
     try {
