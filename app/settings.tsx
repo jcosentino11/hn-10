@@ -1,10 +1,11 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert, SafeAreaView, StatusBar, Appearance } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert, SafeAreaView, StatusBar, Appearance, Platform } from 'react-native';
 import { useColorScheme } from 'react-native';
 import { useThemeColor } from "@/utils/Colors";
 import { Feather } from '@expo/vector-icons';
 import Header from '@/components/Header';
 import { SettingsContext } from '@/components/SettingsProvider';
+import Purchases, { PurchasesOffering } from 'react-native-purchases';
 
 export type SelectedBrowser = 'In App' | 'Default';
 
@@ -70,10 +71,11 @@ export default function SettingsPage() {
             </TouchableOpacity>
           ))}
         </View>
-
-        <TouchableOpacity style={[styles.tipButton, { backgroundColor: tintColor }]} onPress={handleTip}>
-          <Text style={styles.tipButtonText}>Tip Jar</Text>
-        </TouchableOpacity>
+        {/* {Platform.OS === "ios"  && (
+          <TouchableOpacity style={[styles.tipButton, { backgroundColor: tintColor }]} onPress={handleTip}>
+            <Text style={styles.tipButtonText}>Tip Jar</Text>
+          </TouchableOpacity>
+        )} */}
       </View>
     </SafeAreaView>
   );
