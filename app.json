@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "hn-10",
-    "slug": "hn-10",
+    "slug": "hn10",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "hntt",
+    "scheme": "hnten",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -13,7 +13,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "bundleIdentifier": "me.josephcosentino.hntt",
+      "bundleIdentifier": "me.josephcosentino.hnten",
       "supportsTablet": false
     },
     "plugins": [
@@ -27,7 +27,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "efbbf69e-c5aa-4e29-b90a-3125b311bdeb"
+        "projectId": "1680975c-94e3-4127-bdc3-3b186ea46851"
       }
     }
   }
